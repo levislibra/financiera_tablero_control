@@ -24,20 +24,147 @@
         <form create="false" delete="false">
           <header>
             <button name="button_crear_meses" string="Crear meses" type="object" class="oe_highlight"/>
+            <button name="actualizar_prestamos" string="Actualizar Prestamos" type="object" class="oe_highlight"/>
           </header>
           <sheet>
             <group>
-              <group>
-                <field name="company_id" groups="base.group_erp_manager"/>
-                <field name="name"/>
-                <field name="periodo" required="1"/>
-                <field name="year" required="1"/>
-                <field name="month"/>
-                <field name="day"/>
-                <field name="month_ids"/>
-                <field name="day_ids"/>
+              <field name="company_id" groups="base.group_erp_manager"/>
+              <field name="name" readonly="1"/>
+              <field name="periodo" required="1"/>
+              <field name="year" required="1"/>
+              <field name="month_string" attrs="{'invisible': [('periodo', '=', 'year')]}"/>
+              <field name="day" attrs="{'invisible': [('periodo', '!=', 'day')]}"/>
+              <field name="fecha_desde"/>
+              <field name="fecha_hasta"/>
+            </group>
+            <group>
+              <group string="Por sucursal">
+                <notebook>
+                  <page string="Venta de Prestamos">
+                    <field name="prestamo_ids" domain="[('entidad_type', '=', 'sucursal')]">
+                      <tree>
+                        <field name="entidad_id"/>
+                        <field name="entidad_type"/>
+                        <field name="cantidad" sum="Total"/>
+                        <field name="capital" sum="Total"/>
+                        <field name="interes" sum="Total"/>
+                        <field name="total"/>
+                        <field name="meses_promedio"/>
+                        <field name="nuevos" sum="Total"/>
+                      </tree>
+                    </field>
+                  </page>
+                </notebook>
+                <separator colspan="2"/>
+                <notebook>
+                  <page string="Cobro de Cuotas">
+                    <field name="cuota_ids" domain="[('entidad_id.type', '=', 'sucursal')]" editable="1">
+                      <tree>
+                        <field name="entidad_id"/>
+                        <field name="entidad_type"/>
+                        <field name="cantidad" sum="Total"/>
+                        <field name="capital" sum="Total"/>
+                        <field name="interes" sum="Total"/>
+                        <field name="punitorio" sum="Total"/>
+                        <field name="seguro" sum="Total"/>
+                        <field name="otros" sum="Total"/>
+                        <field name="parcial" sum="Total"/>
+                        <field name="por_cobrar" sum="Total"/>
+                        <field name="total"/>
+                      </tree>
+                    </field>
+                  </page>
+                </notebook>
+              </group>
+              <group string="Por comercio">
+                <notebook>
+                  <page string="Venta de Prestamos">
+                    <!-- <field name="prestamo_ids" domain="[('entidad_type', '=', 'comercio')]">
+                      <tree>
+                        <field name="entidad_id"/>
+                        <field name="entidad_type"/>
+                        <field name="cantidad" sum="Total"/>
+                        <field name="capital" sum="Total"/>
+                        <field name="interes" sum="Total"/>
+                        <field name="total"/>
+                        <field name="meses_promedio"/>
+                        <field name="nuevos" sum="Total"/>
+                      </tree>
+                    </field> -->
+                  </page>
+                </notebook>
+                <separator colspan="2"/>
+                <notebook>
+                  <page string="Cobro de Cuotas">
+                    <field name="cuota_ids" domain="[('entidad_id.type', '=', 'comercio')]" editable="1">
+                      <tree>
+                        <field name="entidad_id"/>
+                        <field name="entidad_type"/>
+                        <field name="cantidad" sum="Total"/>
+                        <field name="capital" sum="Total"/>
+                        <field name="interes" sum="Total"/>
+                        <field name="punitorio" sum="Total"/>
+                        <field name="seguro" sum="Total"/>
+                        <field name="otros" sum="Total"/>
+                        <field name="parcial" sum="Total"/>
+                        <field name="por_cobrar" sum="Total"/>
+                        <field name="total"/>
+                      </tree>
+                    </field>
+                  </page>
+                </notebook>
               </group>
             </group>
+            <notebook atts="{'invisible': [('periodo', '!=', 'year')]}">
+              <page string="Meses">
+                <field name="month_ids" mode="kanban" readonly="1">
+                  <kanban>
+                      <field name="id"/>
+                      <field name="name"/>
+                      <field name="month_string"/>
+                      <field name="color"/>
+                      <templates>
+                          <t t-name="kanban-box">
+                              <t t-set="id" t-value="kanban_color(record.id.raw_value)"/>
+                              <div t-att-class="id + (record.name.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
+                                  <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                  <div class="oe_kanban_details">
+                                      <field name="name"/>
+                                      <div t-if="record.month_string.raw_value"><field name="month_string"/></div>
+                                      <button name="open_line" type="object" class="oe_highlight">Ver</button>
+                                  </div>
+                              </div>
+                          </t>
+                      </templates>
+                  </kanban>
+                </field>
+              </page>
+            </notebook>
+            <notebook atts="{'invisible': [('periodo', '!=', 'month')]}">
+              <page>
+                <field name="day_ids" mode="kanban" readonly="1">
+                  <kanban>
+                      <field name="id"/>
+                      <field name="name"/>
+                      <field name="day"/>
+                      <field name="color"/>
+                      <templates>
+                          <t t-name="kanban-box">
+                              <t t-set="id" t-value="kanban_color(record.id.raw_value)"/>
+                              <div t-att-class="id + (record.name.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
+                                  <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                  <div class="oe_kanban_details">
+                                      <field name="name"/>
+                                      <div t-if="record.day.raw_value"><field name="day"/></div>
+                                      <button name="open_line" type="object" class="oe_highlight">Ver</button>
+                                  </div>
+                              </div>
+                          </t>
+                      </templates>
+                  </kanban>
+                </field>
+              </page>
+            </notebook>
           </sheet>
         </form>
       </field>
@@ -86,7 +213,7 @@
 
     <!-- Top menu item -->
     
-    <menuitem name="Tablero" id="menu_tablero" web_icon="financiera_tablero,static/description/icon.png" action="tablero_action"/>
+    <menuitem name="Tablero" id="menu_tablero" web_icon="financiera_tablero_control,static/description/icon.png" action="tablero_action"/>
 
     <!-- <menuitem name="Reportes" id="menu_cuenta_action" parent="menu_pagos_360" action="cuenta_action" sequence="0"/> -->
 
