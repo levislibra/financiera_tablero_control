@@ -65,6 +65,7 @@ class FinancieraTablero(models.Model):
 				'parent_year_id': self.id,
 				'fecha_desde': fecha_desde,
 				'fecha_hasta': fecha_hasta,
+				'state': 'creado',
 			}
 			tablero_mes_id = self.env['financiera.tablero'].create(t_values)
 			self.month_ids = [tablero_mes_id.id]
@@ -82,6 +83,7 @@ class FinancieraTablero(models.Model):
 					'parent_month_id': tablero_mes_id.id,
 					'fecha_desde': fecha_desde,
 					'fecha_hasta': fecha_hasta,
+					'state': 'creado',
 				}
 				tablero_dia_id = self.env['financiera.tablero'].create(t_values)
 				tablero_mes_id.day_ids = [tablero_dia_id.id]
