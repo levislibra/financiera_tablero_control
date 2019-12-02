@@ -1,2 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_financiera_tablero_control_financiera_tablero_control,financiera_tablero_control.financiera_tablero_control,model_financiera_tablero_control_financiera_tablero_control,,1,0,0,0
+
+manager_financiera_tablero,financiera.tablero,model_financiera_tablero,financiera_tablero_control.manager,1,1,1,1
+
+manager_financiera_tablero_prestamo,financiera.tablero.prestamo,model_financiera_tablero_prestamo,financiera_tablero_control.manager,1,1,1,1
+
+manager_financiera_tablero_cuota,financiera.tablero.cuota,model_financiera_tablero_cuota,financiera_tablero_control.manager,1,1,1,1

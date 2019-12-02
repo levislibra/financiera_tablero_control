@@ -23,15 +23,16 @@
       <field name="arch" type="xml">
         <form create="false" delete="false">
           <header>
-            <button name="button_crear_meses" string="Crear meses" type="object" class="oe_highlight"/>
-            <button name="actualizar_prestamos" string="Actualizar Prestamos" type="object" class="oe_highlight"/>
+            <button name="button_crear_meses" states="borrador" string="Crear meses" type="object" class="oe_highlight"/>
+            <button name="actualizar_tablero" states="creado" string="Actualizar Tablero" type="object" class="oe_highlight"/>
+            <field name="state" widget="statusbar"/>
           </header>
           <sheet>
             <group>
               <field name="company_id" groups="base.group_erp_manager"/>
               <field name="name" readonly="1"/>
               <field name="periodo" required="1"/>
-              <field name="year" required="1"/>
+              <field name="year" required="1" widget="char"/>
               <field name="month_string" attrs="{'invisible': [('periodo', '=', 'year')]}"/>
               <field name="day" attrs="{'invisible': [('periodo', '!=', 'day')]}"/>
               <field name="fecha_desde"/>
@@ -41,7 +42,7 @@
               <group string="Por sucursal">
                 <notebook>
                   <page string="Venta de Prestamos">
-                    <field name="prestamo_ids" domain="[('entidad_type', '=', 'sucursal')]">
+                    <field name="prestamo_sucursal_ids">
                       <tree>
                         <field name="entidad_id"/>
                         <field name="entidad_type"/>
@@ -49,28 +50,8 @@
                         <field name="capital" sum="Total"/>
                         <field name="interes" sum="Total"/>
                         <field name="total"/>
-                        <field name="meses_promedio"/>
+                        <!-- <field name="meses_promedio"/> -->
                         <field name="nuevos" sum="Total"/>
-                      </tree>
-                    </field>
-                  </page>
-                </notebook>
-                <separator colspan="2"/>
-                <notebook>
-                  <page string="Cobro de Cuotas">
-                    <field name="cuota_ids" domain="[('entidad_id.type', '=', 'sucursal')]" editable="1">
-                      <tree>
-                        <field name="entidad_id"/>
-                        <field name="entidad_type"/>
-                        <field name="cantidad" sum="Total"/>
-                        <field name="capital" sum="Total"/>
-                        <field name="interes" sum="Total"/>
-                        <field name="punitorio" sum="Total"/>
-                        <field name="seguro" sum="Total"/>
-                        <field name="otros" sum="Total"/>
-                        <field name="parcial" sum="Total"/>
-                        <field name="por_cobrar" sum="Total"/>
-                        <field name="total"/>
                       </tree>
                     </field>
                   </page>
@@ -79,7 +60,7 @@
               <group string="Por comercio">
                 <notebook>
                   <page string="Venta de Prestamos">
-                    <!-- <field name="prestamo_ids" domain="[('entidad_type', '=', 'comercio')]">
+                    <field name="prestamo_comercio_ids">
                       <tree>
                         <field name="entidad_id"/>
                         <field name="entidad_type"/>
@@ -87,16 +68,19 @@
                         <field name="capital" sum="Total"/>
                         <field name="interes" sum="Total"/>
                         <field name="total"/>
-                        <field name="meses_promedio"/>
+                        <!-- <field name="meses_promedio"/> -->
                         <field name="nuevos" sum="Total"/>
                       </tree>
-                    </field> -->
+                    </field>
                   </page>
                 </notebook>
-                <separator colspan="2"/>
+              </group>
+            </group>
+            <group>
+              <group string="Por Sucursal">
                 <notebook>
                   <page string="Cobro de Cuotas">
-                    <field name="cuota_ids" domain="[('entidad_id.type', '=', 'comercio')]" editable="1">
+                    <field name="cuota_sucursal_ids" editable="1">
                       <tree>
                         <field name="entidad_id"/>
                         <field name="entidad_type"/>
@@ -107,12 +91,43 @@
                         <field name="seguro" sum="Total"/>
                         <field name="otros" sum="Total"/>
                         <field name="parcial" sum="Total"/>
+                        <field name="total_cobrado" sum="Total"/>
                         <field name="por_cobrar" sum="Total"/>
-                        <field name="total"/>
+                        <field name="total_cuotas" sum="Total"/>
+                        <field name="mora"/>
                       </tree>
                     </field>
                   </page>
                 </notebook>
+              </group>
+              <group>
+              </group>
+            </group>
+            <group>
+              <group string="Por Comercio">
+                <notebook>
+                  <page string="Cobro de Cuotas">
+                    <field name="cuota_comercio_ids" editable="1">
+                      <tree>
+                        <field name="entidad_id"/>
+                        <field name="entidad_type"/>
+                        <field name="cantidad" sum="Total"/>
+                        <field name="capital" sum="Total"/>
+                        <field name="interes" sum="Total"/>
+                        <field name="punitorio" sum="Total"/>
+                        <field name="seguro" sum="Total"/>
+                        <field name="otros" sum="Total"/>
+                        <field name="parcial" sum="Total"/>
+                        <field name="total_cobrado" sum="Total"/>
+                        <field name="por_cobrar" sum="Total"/>
+                        <field name="total_cuotas" sum="Total"/>
+                        <field name="mora"/>
+                      </tree>
+                    </field>
+                  </page>
+                </notebook>
+              </group>
+              <group>
               </group>
             </group>
             <notebook atts="{'invisible': [('periodo', '!=', 'year')]}">
@@ -144,23 +159,23 @@
               <page>
                 <field name="day_ids" mode="kanban" readonly="1">
                   <kanban>
-                      <field name="id"/>
-                      <field name="name"/>
-                      <field name="day"/>
-                      <field name="color"/>
-                      <templates>
-                          <t t-name="kanban-box">
-                              <t t-set="id" t-value="kanban_color(record.id.raw_value)"/>
-                              <div t-att-class="id + (record.name.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
-                                  <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
-                                  <div class="oe_kanban_details">
-                                      <field name="name"/>
-                                      <div t-if="record.day.raw_value"><field name="day"/></div>
-                                      <button name="open_line" type="object" class="oe_highlight">Ver</button>
-                                  </div>
-                              </div>
-                          </t>
-                      </templates>
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="day"/>
+                    <field name="color"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <t t-set="id" t-value="kanban_color(record.id.raw_value)"/>
+                            <div t-att-class="id + (record.name.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
+                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                <div class="oe_kanban_details">
+                                    <field name="name"/>
+                                    <div t-if="record.day.raw_value"><field name="day"/></div>
+                                    <button name="open_line" type="object" class="oe_highlight">Ver</button>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
                   </kanban>
                 </field>
               </page>
@@ -213,9 +228,7 @@
 
     <!-- Top menu item -->
     
-    <menuitem name="Tablero" id="menu_tablero" web_icon="financiera_tablero_control,static/description/icon.png" action="tablero_action"/>
-
-    <!-- <menuitem name="Reportes" id="menu_cuenta_action" parent="menu_pagos_360" action="cuenta_action" sequence="0"/> -->
-
+    <menuitem name="Tablero de control" id="menu_tablero" web_icon="financiera_tablero_control,static/description/icon.png" action="tablero_action" groups="financiera_tablero_control.manager"/>
+    
   </data>
 </openerp>

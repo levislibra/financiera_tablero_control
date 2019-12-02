@@ -17,8 +17,12 @@ class FinancieraTablero(models.Model):
 	month = fields.Integer('Mes')
 	month_string = fields.Char('Mes')
 	year = fields.Integer('Año')
-	prestamo_ids = fields.One2many('financiera.tablero.prestamo', 'tablero_id', 'Prestamos')
-	cuota_ids = fields.One2many('financiera.tablero.cuota', 'tablero_id', 'Cuotas')
+	state = fields.Selection([('borrador', 'Borrador'), ('creado', 'Creado')], 'Estado', default='borrador')
+	prestamo_sucursal_ids = fields.One2many('financiera.tablero.prestamo', 'tablero_sucursal_id', 'Prestamos')
+	prestamo_sucursal_graph_ids = fields.One2many('financiera.tablero.prestamo', 'tablero_sucursal_id', 'Prestamos')
+	prestamo_comercio_ids = fields.One2many('financiera.tablero.prestamo', 'tablero_comercio_id', 'Prestamos')
+	cuota_sucursal_ids = fields.One2many('financiera.tablero.cuota', 'tablero_sucursal_id', 'Cuotas')
+	cuota_comercio_ids = fields.One2many('financiera.tablero.cuota', 'tablero_comercio_id', 'Cuotas')
 	parent_year_id = fields.Many2one('financiera.tablero', 'Año')
 	parent_month_id = fields.Many2one('financiera.tablero', 'Mes')
 	month_ids = fields.One2many('financiera.tablero', 'parent_year_id', 'Meses', ondelete='cascade')
@@ -83,6 +87,12 @@ class FinancieraTablero(models.Model):
 				tablero_mes_id.day_ids = [tablero_dia_id.id]
 				j += 1
 			i += 1
+		self.state = 'creado'
+
+	@api.one
+	def actualizar_tablero(self):
+		self.actualizar_prestamos()
+		self.actualizar_cuotas()
 
 	@api.one
 	def actualizar_prestamos(self):
@@ -91,7 +101,9 @@ class FinancieraTablero(models.Model):
 		entidad_obj = self.pool.get('financiera.entidad')
 		entidad_ids = entidad_obj.search(cr, uid, [
 			('company_id', '=', self.company_id.id)])
-		for prestamo_id in self.prestamo_ids:
+		for prestamo_id in self.prestamo_sucursal_ids:
+			prestamo_id.unlink()
+		for prestamo_id in self.prestamo_comercio_ids:
 			prestamo_id.unlink()
 		for _id in entidad_ids:
 			entidad_id = entidad_obj.browse(cr, uid, _id)
@@ -118,18 +130,22 @@ class FinancieraTablero(models.Model):
 					('comercio_id', '=', entidad_id.id)])
 			for _id in prestamo_ids:
 				prestamo_id = prestamo_obj.browse(cr, uid, _id)
-				cantidad += 1
-				capital += prestamo_id.monto_solicitado
-				interes += prestamo_id.interes_a_cobrar
-				total = capital+interes
-				prestamo_partner_obj = self.pool.get('financiera.prestamo')
-				prestamo_partner_ids = prestamo_partner_obj.search(cr, uid, [
-					('company_id', '=', self.company_id.id),
-					('partner_id', '=', prestamo_id.partner_id.id)])
-				if len(prestamo_partner_ids) == 1:
-					nuevos += 1
+				if prestamo_id.state in ('acreditacion_pendiente', 
+					'acreditado', 'precancelado', 'refinanciado', 'pagado', 'incobrable'):
+					cantidad += 1
+					capital += prestamo_id.monto_solicitado
+					interes += prestamo_id.interes_a_cobrar
+					total = capital+interes
+					prestamo_partner_obj = self.pool.get('financiera.prestamo')
+					prestamo_partner_ids = prestamo_partner_obj.search(cr, uid, [
+						('company_id', '=', self.company_id.id),
+						('partner_id', '=', prestamo_id.partner_id.id),
+						('fecha', '<=', prestamo_id.fecha),
+						('state', 'in', ('acreditacion_pendiente', 'acreditado', 
+							'precancelado', 'refinanciado', 'pagado', 'incobrable'))])
+					if len(prestamo_partner_ids) == 1:
+						nuevos += 1
 			tp_values = {
-				'tablero_id': self.id,
 				'entidad_id': entidad_id.id,
 				'cantidad': cantidad,
 				'capital': capital,
@@ -139,7 +155,88 @@ class FinancieraTablero(models.Model):
 				'nuevos': nuevos,
 			}
 			tablero_prestamo_id = self.env['financiera.tablero.prestamo'].create(tp_values)
-			self.prestamo_ids = [tablero_prestamo_id.id]
+			if entidad_id.type == 'sucursal':
+				self.prestamo_sucursal_ids = [tablero_prestamo_id.id]
+			else:
+				self.prestamo_comercio_ids = [tablero_prestamo_id.id]
+
+	@api.one
+	def actualizar_cuotas(self):
+		cr = self.env.cr
+		uid = self.env.uid
+		entidad_obj = self.pool.get('financiera.entidad')
+		entidad_ids = entidad_obj.search(cr, uid, [
+			('company_id', '=', self.company_id.id)])
+		for cuota_id in self.cuota_sucursal_ids:
+			cuota_id.unlink()
+		for cuota_id in self.cuota_comercio_ids:
+			cuota_id.unlink()
+		for _id in entidad_ids:
+			entidad_id = entidad_obj.browse(cr, uid, _id)
+			cantidad = 0
+			capital = 0
+			interes = 0
+			punitorio = 0
+			seguro = 0
+			otros = 0
+			parcial = 0
+			total_cobrado = 0
+			total_cuotas = 0
+			por_cobrar = 0
+			mora = 0
+			cuota_ids = []
+			if entidad_id.type == 'sucursal':
+				cuota_obj = self.pool.get('financiera.prestamo.cuota')
+				cuota_ids = cuota_obj.search(cr, uid, [
+					('company_id', '=', self.company_id.id),
+					('fecha_vencimiento', '>=', self.fecha_desde),
+					('fecha_vencimiento', '<=', self.fecha_hasta),
+					('sucursal_id', '=', entidad_id.id)])
+			elif entidad_id.type == 'comercio':
+				cuota_obj = self.pool.get('financiera.prestamo.cuota')
+				cuota_ids = cuota_obj.search(cr, uid, [
+					('company_id', '=', self.company_id.id),
+					('fecha_vencimiento', '>=', self.fecha_desde),
+					('fecha_vencimiento', '<=', self.fecha_hasta),
+					('comercio_id', '=', entidad_id.id)])
+			for _id in cuota_ids:
+				cuota_id = cuota_obj.browse(cr, uid, _id)
+				if cuota_id.state in ('precancelada', 'cobrada'):
+					cantidad += 1
+					capital += cuota_id.capital 
+					interes += cuota_id.interes
+					punitorio += cuota_id.punitorio+cuota_id.punitorio_iva
+					seguro += cuota_id.seguro+cuota_id.seguro_iva
+					otros += cuota_id.ajuste+cuota_id.ajuste_iva
+					total_cobrado += cuota_id.total
+					total_cuotas += cuota_id.total
+				elif cuota_id.state in ('activa', 'judicial', 'incobrable'):
+					parcial += cuota_id.cobrado
+					total_cobrado += cuota_id.cobrado
+					por_cobrar += cuota_id.saldo
+					total_cuotas += cuota_id.total
+			if total_cuotas > 0:
+				mora = por_cobrar/total_cuotas
+			tc_values = {
+				'entidad_id': entidad_id.id,
+				'cantidad': cantidad,
+				'capital': capital,
+				'interes': interes,
+				'punitorio': punitorio,
+				'seguro': seguro,
+				'otros': otros,
+				'parcial': parcial,
+				'total_cobrado': total_cobrado,
+				'por_cobrar': por_cobrar,
+				'total_cuotas': total_cuotas,
+				'mora': mora,
+			}
+			tablero_cuota_id = self.env['financiera.tablero.cuota'].create(tc_values)
+			if entidad_id.type == 'sucursal':
+				self.cuota_sucursal_ids = [tablero_cuota_id.id]
+			else:
+				self.cuota_comercio_ids = [tablero_cuota_id.id]
+
 
 	def open_line(self, cr, uid, id, context=None):
 		return {
@@ -155,7 +252,8 @@ class FinancieraTablero(models.Model):
 class FinancieraTableroPrestamo(models.Model):
 	_name = 'financiera.tablero.prestamo'
 
-	tablero_id = fields.Many2one('financiera.tablero', 'Tablero')
+	tablero_sucursal_id = fields.Many2one('financiera.tablero', 'Tablero')
+	tablero_comercio_id = fields.Many2one('financiera.tablero', 'Tablero')
 	entidad_id = fields.Many2one('financiera.entidad', 'Entidad')
 	entidad_type = fields.Selection('Entidad tipo', related='entidad_id.type')
 	cantidad = fields.Integer('Cantidad')
@@ -169,7 +267,8 @@ class FinancieraTableroPrestamo(models.Model):
 class FinancieraTableroCuota(models.Model):
 	_name = 'financiera.tablero.cuota'
 
-	tablero_id = fields.Many2one('financiera.tablero', 'Tablero')
+	tablero_sucursal_id = fields.Many2one('financiera.tablero', 'Tablero')
+	tablero_comercio_id = fields.Many2one('financiera.tablero', 'Tablero')
 	entidad_id = fields.Many2one('financiera.entidad', 'Entidad')
 	entidad_type = fields.Selection('Entidad tipo', related='entidad_id.type')
 	cantidad = fields.Integer('Cantidad')
@@ -179,6 +278,8 @@ class FinancieraTableroCuota(models.Model):
 	seguro = fields.Float('Seguro', digits=(16,2))
 	otros = fields.Float('Otros', digits=(16,2))
 	parcial = fields.Float('Parcial', digits=(16,2))
-	total = fields.Float('Total', digits=(16,2))
+	total_cobrado = fields.Float('Total cobrado', digits=(16,2))
 	por_cobrar = fields.Float('Por cobrar', digits=(16,2))
+	total_cuotas = fields.Float('Total cuotas', digits=(16,2))
+	mora = fields.Float('Mora', digits=(16,2))
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.prestamo'))
