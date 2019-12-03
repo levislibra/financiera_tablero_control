@@ -2,6 +2,7 @@
 
 from openerp import models, fields, api
 from calendar import monthrange
+from datetime import datetime, timedelta
 
 MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
@@ -186,6 +187,8 @@ class FinancieraTablero(models.Model):
 			total_cuotas = 0
 			por_cobrar = 0
 			mora = 0
+			total_cuotas_vencidas = 0
+			saldo_cuotas_vencidas = 0
 			cuota_ids = []
 			if entidad_id.type == 'sucursal':
 				cuota_obj = self.pool.get('financiera.prestamo.cuota')
@@ -211,14 +214,17 @@ class FinancieraTablero(models.Model):
 					seguro += cuota_id.seguro+cuota_id.seguro_iva
 					otros += cuota_id.ajuste+cuota_id.ajuste_iva
 					total_cobrado += cuota_id.total
-					total_cuotas += cuota_id.total
 				elif cuota_id.state in ('activa', 'judicial', 'incobrable'):
 					parcial += cuota_id.cobrado
 					total_cobrado += cuota_id.cobrado
 					por_cobrar += cuota_id.saldo
-					total_cuotas += cuota_id.total
+				total_cuotas += cuota_id.total
+				fecha_vencimiento = datetime.strptime(cuota_id.fecha_vencimiento, "%Y-%m-%d")
+				if fecha_vencimiento < datetime.now():
+					total_cuotas_vencidas += cuota_id.total
+					saldo_cuotas_vencidas += cuota_id.saldo
 			if total_cuotas > 0:
-				mora = por_cobrar/total_cuotas
+				mora = saldo_cuotas_vencidas/total_cuotas_vencidas
 			tc_values = {
 				'entidad_id': entidad_id.id,
 				'cantidad': cantidad,
