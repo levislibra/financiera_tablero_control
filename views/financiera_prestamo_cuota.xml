@@ -1,0 +1,74 @@
+<openerp>
+  <data>
+
+			<!-- Pivote view -->
+
+			<record model="ir.ui.view" id="financiera_prestamo_cuota_pivot">
+				<field name="name">Prestamo</field>
+				<field name="model">financiera.prestamo.cuota</field>
+				<field name="arch" type="xml">
+					<pivot string="Cuotas" disable_linking="True">
+						<field name="sucursal_id" type="row"/>
+						<field name="saldo_store" type="measure"/>
+						<field name="cobrado_store" type="measure"/>
+						<field name="total_store" type="measure"/>
+						<field name="fecha_vencimiento" type="col"/>
+					</pivot>
+				</field>
+			</record>
+	
+			<record model="ir.actions.act_window" id="financiera_prestamo_reporte_cuotas_action">
+				<field name="name">Analisis de cuotas</field>
+				<field name="res_model">financiera.prestamo.cuota</field>
+				<field name="domain">[('state', '!=','cotizacion')]</field>
+				<field name="view_mode">pivot</field>
+				<field name="view_ids" eval="[(5, 0, 0), 
+					(0, 0, {'view_mode': 'pivot', 'view_id': ref('financiera_prestamo_cuota_pivot')})]"/>
+			</record>
+	
+			<!-- Graph views segun sucursal -->
+	
+			<record id="financiera_prestamo_cuota_sucursal_graph" model="ir.ui.view">
+				<field name="name">Grafico segun sucursal</field>
+				<field name="model">financiera.prestamo.cuota</field>
+				<field name="arch" type="xml">
+					<graph string="Nivel de colocacion segun sucursal" disable_linking="True" type="pie">
+						<field name="sucursal_id" type="row"/>
+						<field name="saldo_store" type="measure"/>
+					</graph>
+				</field>
+			</record>
+			
+			<record model="ir.actions.act_window" id="financiera_prestamo_cuota_sucursal_graph_action">
+				<field name="name">Grafico segun sucursal</field>
+				<field name="res_model">financiera.prestamo.cuota</field>
+				<field name="domain">[('state', '!=','cotizacion')]</field>
+				<field name="view_mode">graph</field>
+				<field name="view_ids" eval="[(5, 0, 0), 
+					(0, 0, {'view_mode': 'graph', 'view_id': ref('financiera_prestamo_cuota_sucursal_graph')})]"/>
+			</record>
+	
+			<!-- Graph views segun mora -->
+	
+			<record id="financiera_prestamo_cuota_mora_graph" model="ir.ui.view">
+				<field name="name">Grafico segun mora</field>
+				<field name="model">financiera.prestamo.cuota</field>
+				<field name="arch" type="xml">
+					<graph string="Segun mora" disable_linking="True" type="pie">
+						<field name="state_mora" type="row"/>
+						<field name="saldo_store" type="measure"/>
+					</graph>
+				</field>
+			</record>
+			
+			<record model="ir.actions.act_window" id="financiera_prestamo_cuota_mora_graph_action">
+				<field name="name">Grafico segun mora</field>
+				<field name="res_model">financiera.prestamo.cuota</field>
+				<field name="domain">[('state', '!=','cotizacion')]</field>
+				<field name="view_mode">graph</field>
+				<field name="view_ids" eval="[(5, 0, 0), 
+					(0, 0, {'view_mode': 'graph', 'view_id': ref('financiera_prestamo_cuota_mora_graph')})]"/>
+			</record>
+
+  </data>
+</openerp>

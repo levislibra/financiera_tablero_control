@@ -26,8 +26,13 @@
         'security/user_groups.xml',
         'security/ir.model.access.csv',
         'security/security.xml',
+				'views/financiera_prestamo_cuota.xml',
+				'views/financiera_prestamo.xml',
+				'views/financiera_tablero.xml',
         'views/views.xml',
-        # 'views/templates.xml',
+				'reports/generic_reports.xml',
+				'wizards/financiera_prestamo_report.xml',
+				'wizards/res_partner_report_wizard.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
