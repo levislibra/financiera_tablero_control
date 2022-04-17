@@ -130,7 +130,7 @@ class FinancieraTablero(models.Model):
 					('company_id', '=', self.company_id.id),
 					('fecha', '>=', self.fecha_desde),
 					('fecha', '<=', self.fecha_hasta),
-					('comercio_id', '=', entidad_id.id)])
+					('sucursal_id', '=', entidad_id.id)])
 			for _id in prestamo_ids:
 				prestamo_id = prestamo_obj.browse(cr, uid, _id)
 				if prestamo_id.state in ('acreditacion_pendiente', 
@@ -203,7 +203,7 @@ class FinancieraTablero(models.Model):
 					('company_id', '=', self.company_id.id),
 					('fecha_vencimiento', '>=', self.fecha_desde),
 					('fecha_vencimiento', '<=', self.fecha_hasta),
-					('comercio_id', '=', entidad_id.id)])
+					('sucursal_id', '=', entidad_id.id)])
 			for _id in cuota_ids:
 				cuota_id = cuota_obj.browse(cr, uid, _id)
 				if cuota_id.state in ('precancelada', 'cobrada'):
