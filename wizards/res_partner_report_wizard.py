@@ -10,16 +10,10 @@ class ResPartnerReportWizard(models.TransientModel):
 	_description = 'Reporte de Clientes'
 
 	balance_date = fields.Date("Saldos a la fecha")
-	actualizar_datos = fields.Boolean("Actualizar datos", default=True)
 	file_pdf = fields.Binary('Archivo PDF')
 	file_name_pdf = fields.Char('Nombre', default='Saldo Clientes.pdf')
 	file = fields.Binary('Archivo excel')
 	file_name = fields.Char('Nombre', default='Saldo Clientes.xls')
-
-	@api.one
-	@api.onchange('balance_date')
-	def onchange_balance_date(self):
-		self.actualizar_datos = True
 
 	@api.multi
 	def print_report(self):
@@ -28,10 +22,8 @@ class ResPartnerReportWizard(models.TransientModel):
 			('cuota_ids.state', 'in', ['activa'])
 		])
 		records = self.env['res.partner'].browse(partner_ids)
-		if self.actualizar_datos:
-			for partner_id in records:
-				partner_id.set_saldos_reporte(self.balance_date)
-		self.actualizar_datos = False
+		for partner_id in records:
+			partner_id.set_saldos_reporte(self.balance_date)
 		self.generate_excel(records)
 		# data = {'balance_date': self.balance_date}
 		report = self.env['report'].get_action(records, 'financiera_tablero_control.partner_report_pdf_view')#, data=data)
@@ -46,26 +38,15 @@ class ResPartnerReportWizard(models.TransientModel):
 		sheet.write(0, 0, 'Cliente')
 		sheet.write(0, 1, 'Identificacion')
 		sheet.write(0, 2, 'Saldo vencido')
-		sheet.write(0, 3, 'Facturacion sobre saldo vencido')
-		sheet.write(0, 4, 'Saldo no vencido')
-		sheet.write(0, 5, 'Saldo total')
+		sheet.write(0, 3, 'Saldo no vencido')
+		sheet.write(0, 4, 'Saldo total')
 		row = 1
 		for partner_id in records:
-			col = 0
-			while col <= 5:
-				if col == 0:
-					sheet.write(row, col, partner_id.name)
-				elif col == 1:
-					sheet.write(row, col, partner_id.main_id_number)
-				elif col == 2:
-					sheet.write(row, col, partner_id.saldo_vencido)
-				elif col == 3:
-					sheet.write(row, col, partner_id.facturado_sobre_saldo_vencido)
-				elif col == 4:
-					sheet.write(row, col, partner_id.saldo_no_vencido)
-				elif col == 5:
-					sheet.write(row, col, partner_id.saldo_total)
-				col += 1
+			sheet.write(row, 0, partner_id.name)
+			sheet.write(row, 1, partner_id.main_id_number)
+			sheet.write(row, 2, partner_id.saldo_vencido)
+			sheet.write(row, 3, partner_id.saldo_no_vencido)
+			sheet.write(row, 4, partner_id.saldo_total)
 			row +=1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())

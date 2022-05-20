@@ -34,7 +34,7 @@
     </record>
 
     <menuitem id="menu_prestamos_report"
-        name="Reporte de Prestamos PDF (Beta)"
+        name="Reporte de Prestamos"
         parent="menu_prestamos_reportes"
 				sequence="300"
         action="financiera_prestamo_report_menu"/>
@@ -95,79 +95,40 @@
 								<t t-if="data['date_finish']"><strong>Fecha hasta:</strong><span t-esc="data['date_finish']"/></t>
 						</p>
 					</div> -->
-
-					<t t-foreach="docs" t-as="o">
-						<table class="table table-condensed" style="width:100%;">
-							<thead>
-								<tr>
-										<th style="width:15%;">Fecha</th>
-										<th style="width:15%;">Codigo</th>
-										<th style="width:15%;">Cliente</th>
-										<th style="width:15%;">Identificacion</th>
-										<th style="width:15%;">Monto solicitado</th>
-										<th style="width:15%;">Entidad</th>
-										<th style="width:15%;">Estado actual</th>
-								</tr>
-							</thead>
-							<tbody class="invoice_tbody">
+					<table class="table table-condensed" style="width:100%;">
+						<thead>
+							<tr>
+									<th style="width:9%;">Creado</th>
+									<th style="width:9%;">Cliente</th>
+									<th style="width:9%;">PMO</th>
+									<th style="width:9%;">Tipo</th>
+									<th style="width:9%;">Responsable</th>
+									<th style="width:9%;">Monto Solicitado</th>
+									<th style="width:9%;">Saldo</th>
+									<th style="width:9%;">Plan de Pagos</th>
+									<th style="width:9%;">Entidad</th>
+									<th style="width:9%;">Estado</th>
+									<th style="width:9%;">Origen</th>
+							</tr>
+						</thead>
+						<tbody class="invoice_tbody">
+							<t t-foreach="docs" t-as="o">
 								<tr style="font-size:16px;">
-									<td><span t-field="o.fecha"/></td>
-									<td><span t-field="o.name"/></td>
+									<td><span t-field="o.create_date"/></td>
 									<td><span t-field="o.partner_id.name"/></td>
-									<td><span t-field="o.partner_id.main_id_number"/></td>
+									<td><span t-field="o.name"/></td>
+									<td><span t-field="o.prestamo_tipo_id.name"/></td>
+									<td><span t-field="o.responsable_id.name"/></td>
 									<td><span t-field="o.monto_solicitado"/></td>
-									<td><span t-field="o.sucursal_id"/></td>
+									<td><span t-field="o.saldo"/></td>
+									<td><span t-field="o.plan_id.name"/></td>
+									<td><span t-field="o.sucursal_id.name"/></td>
 									<td><span t-field="o.state"/></td>
+									<td><span t-field="o.origen_id.name"/></td>
 								</tr>
-							</tbody>
-						</table>
-						<table class="table table-condensed" style="font-size:12px;">
-							<thead>
-									<tr>
-											<th style="width:15%;">Numero de cuota</th>
-											<th style="width:15%;">Fecha</th>
-											<th style="width:15%;">Saldo Capital</th>
-											<th style="width:15%;">Capital</th>
-											<th style="width:15%;">Interes</th>
-											<th style="width:15%;">Cuota Pura</th>
-											<th style="width:15%;">IVA Interes</th>
-											<th style="width:15%;">Punitorio</th>
-											<th style="width:15%;">IVA Punitorio</th>
-											<th style="width:15%;">Seguro</th>
-											<th style="width:15%;">Iva Seguro</th>
-											<th style="width:15%;">Otros</th>
-											<th style="width:15%;">IVA Otros</th>
-											<th style="width:15%;">Monto cuota</th>
-											<th style="width:15%;">Bonificado / Reintegro</th>
-											<th style="width:15%;">Pago</th>
-											<th style="width:15%;">Saldo</th>
-											<th style="width:15%;">Estado</th>
-									</tr>
-							</thead>
-							<tbody class="invoice_tbody">
-									<tr t-foreach="o.cuota_ids" t-as="l">
-											<td style="width:15%;"><t t-esc="l.numero_cuota"/></td>
-											<td style="width:15%;"><t t-esc="l.fecha_vencimiento"/></td>
-											<td style="width:15%;">$<t t-esc="l.saldo_capital"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.capital"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.interes"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.cuota_pura"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.interes_iva"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.punitorio"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.punitorio_iva"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.seguro"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.seguro_iva"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.ajuste"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.ajuste_iva"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.total"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.reintegro"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.cobrado"/></td>
-											<td style="width:15%;">$<t t-esc="'%.2f'%l.saldo"/></td>
-											<td style="width:15%;"><t t-esc="l.state"/></td>
-									</tr>
-							</tbody>
-						</table>
-					</t>
+							</t>
+						</tbody>
+					</table>
 				</div>
 			</t>
 		</template>
