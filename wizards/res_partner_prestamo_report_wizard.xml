@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="res_partner_prestamo_report_view" model="ir.ui.view">
+        <field name="name">Saldo de prestamos</field>
+        <field name="model">res.partner.prestamo.report.wizard</field>
+        <field name="arch" type="xml">
+          <form>
+						<sheet>
+							<group>
+								<field name="balance_date" required="1"/>
+								<field name="file" filename="file_name" readonly="1"/>
+							</group>
+						</sheet>
+						<footer>
+								<button name="print_report" string="Imprimir" class="oe_highlight" type="object"/>
+								<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+        </field>
+    </record>
+
+    <record id="res_partner_prestamo_report_menu" model="ir.actions.act_window">
+        <field name="name">Saldo de prestamos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner.prestamo.report.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="res_partner_prestamo_report_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_res_partner_prestamo_report"
+        name="Saldo de prestamos (Beta)"
+        parent="menu_clientes_reportes"
+				sequence="170"
+        action="res_partner_prestamo_report_menu"/>
+
+    <record id="action_res_partner_prestamo_report_values1" model="ir.values">
+        <field name="model_id" ref="financiera_prestamos.model_financiera_prestamo" />
+        <field name="name">Saldo de prestamos</field>
+        <field name="key2">client_print_multi</field>
+        <field name="value" eval="'ir.actions.act_window,' +str(ref('res_partner_prestamo_report_menu'))" />
+        <field name="key">action</field>
+        <field name="model">financiera.prestamo</field>
+    </record>
+
+		<!-- Reporte de saldo de clientes en PDF -->
+		<report
+			id="partner_prestamo_report_pdf"
+			model="financiera.prestamo"
+			string="Clientes - Reporte de saldos PDF"
+			report_type="qweb-pdf"
+			name="financiera_tablero_control.partner_prestamo_report_pdf_view"
+			file="financiera_tablero_control.partner_prestamo_report_pdf_view"
+		/>
+		<record id="financiera_tablero_control.partner_prestamo_report_pdf" model="ir.actions.report.xml">
+			<field name="attachment_use" eval="False"/>
+		</record>
+
+		<template id="partner_prestamo_report_pdf_view">
+			<t t-call="report.html_container">
+				<t t-if="not o and doc">
+					<t t-set="o" t-value="doc"/>
+				</t>
+				<t t-if="o and 'company_id' in o">
+						<t t-set="company" t-value="o.company_id"/>
+				</t>
+				<t t-if="not o or not 'company_id' in o">
+						<t t-set="company" t-value="res_company"/>
+				</t>
+				<div class="header">
+					<div class="row">
+							<div class="col-xs-3">
+									<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+							</div>
+							<div class="col-xs-9 text-right" style="margin-top:20px;" t-field="company.rml_header1"/>
+					</div>
+					<div class="row zero_min_height">
+							<div class="col-xs-12">
+									<div style="border-bottom: 1px solid black;"/>
+							</div>
+					</div>
+				</div>
+				<div class="page" style="font-size:16px;">
+					<div align="center" style="font-size:16px;">
+							<b>Saldo de prestamos</b>
+					</div>
+					<!-- <div class="col-xs-4">
+						<p>
+								<t t-if="data['balance_date']"><strong>Fecha desde:</strong><span t-esc="data['balance_date']"/><br/></t>
+						</p>
+					</div> -->
+					<table style="width:100%;">
+							<tr>
+								<th style="vertical-align:middle">
+									<table class="table table-hover table-striped">
+											<thead>
+												<tr>
+													<th>Fecha</th>
+													<th>PMO</th>
+													<th>Cliente</th>
+													<th>Identificacion</th>
+													<th>Entidad</th>
+													<th>Saldo vencido</th>
+												</tr>
+											</thead>
+											<tbody class="invoice_tbody">
+												<t t-foreach="docs" t-as="o">
+													<tr style="font-size:16px;">
+														<td><span t-field="o.fecha"/></td>
+														<td><span t-field="o.name"/></td>
+														<td><span t-field="o.partner_id.name"/></td>
+														<td><span t-field="o.partner_id.main_id_number"/></td>
+														<td><span t-field="o.sucursal_id.name"/></td>
+														<td><span t-field="o.reporte_saldo_vencido"/></td>
+													</tr>
+												</t>
+											</tbody>
+									</table>
+								</th>
+							</tr>
+					</table>
+				</div>
+			</t>
+		</template>
+
+</odoo>
