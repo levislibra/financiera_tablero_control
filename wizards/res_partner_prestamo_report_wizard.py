@@ -19,7 +19,9 @@ class ResPartnerPrestamoReportWizard(models.TransientModel):
 	def print_report(self):
 		prestamo_obj = self.pool.get('financiera.prestamo')
 		prestamo_ids = prestamo_obj.search(self.env.cr, self.env.uid, [
-			('state', 'in', ['acreditado'])
+			('company_id', '=', self.env.user.company_id.id),
+			('state', 'in', ['acreditado']),
+			('fecha', '<=', self.balance_date)
 		])
 		records = self.env['financiera.prestamo'].browse(prestamo_ids)
 		for partner_id in records:

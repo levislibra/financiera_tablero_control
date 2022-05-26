@@ -19,7 +19,9 @@ class ResPartnerReportWizard(models.TransientModel):
 	def print_report(self):
 		partner_obj = self.pool.get('res.partner')
 		partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
-			('cuota_ids.state', 'in', ['activa'])
+			('company_id', '=', self.env.user.company_id.id),
+			('cuota_ids.state', 'in', ['activa']),
+			('fecha_vencimiento', '<=', self.balance_date),
 		])
 		records = self.env['res.partner'].browse(partner_ids)
 		for partner_id in records:
