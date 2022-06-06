@@ -101,8 +101,21 @@
 													<th>Cliente</th>
 													<th>Identificacion</th>
 													<th>Saldo vencido</th>
-													<!-- <th>Saldo no vencido</th>
-													<th>Saldo total</th> -->
+													<th>Saldo no vencido</th>
+													<th>Saldo total</th>
+													<th>Prestamos activos</th>
+													<th>Prestamos cobrados</th>
+													<th>Cuotas activas</th>
+													<th>Cuotas cobradas</th>
+													<th>Cuotas sin mora</th>
+													<th>Cuotas en preventiva</th>
+													<th>Cuotas en mora temprana</th>
+													<th>Cuotas en mora media</th>
+													<th>Cuotas en mora tardia</th>
+													<th>Cuotas incobrables</th>
+													<th>Fecha ultimo pago</th>
+													<th>Dias del ultimo pago</th>
+													<!-- <th>Sucursal</th> -->
 												</tr>
 											</thead>
 											<tbody class="invoice_tbody">
@@ -111,8 +124,21 @@
 														<td><span t-field="o.name"/></td>
 														<td><span t-field="o.main_id_number"/></td>
 														<td><span t-field="o.saldo_vencido"/></td>
-														<!-- <td><span t-field="o.saldo_no_vencido"/></td>
-														<td><span t-field="o.saldo_total"/></td> -->
+														<td><span t-field="o.saldo_no_vencido"/></td>
+														<td><span t-field="o.saldo_total"/></td>
+														<td><span t-field="o.alerta_prestamos_activos"/></td>
+														<td><span t-field="o.alerta_prestamos_cobrados"/></td>
+														<td><span t-field="o.alerta_cuotas_activas"/></td>
+														<td><span t-field="o.alerta_cuotas_cobradas"/></td>
+														<td><span t-field="o.alerta_cuotas_normal"/></td>
+														<td><span t-field="o.alerta_cuotas_preventivas"/></td>
+														<td><span t-field="o.alerta_cuotas_temprana"/></td>
+														<td><span t-field="o.alerta_cuotas_media"/></td>
+														<td><span t-field="o.alerta_cuotas_tardia"/></td>
+														<td><span t-field="o.alerta_cuotas_incobrable"/></td>
+														<td><span t-field="o.alerta_fecha_ultimo_pago"/></td>
+														<td><span t-field="o.alerta_dias_ultimo_pago"/></td>
+														<!-- <td><span t-esc="o.prestamo_ids[0].sucursal_id.name"/></td> -->
 													</tr>
 												</t>
 											</tbody>

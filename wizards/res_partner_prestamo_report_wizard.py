@@ -21,7 +21,7 @@ class ResPartnerPrestamoReportWizard(models.TransientModel):
 		prestamo_ids = prestamo_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.env.user.company_id.id),
 			('state', 'in', ['acreditado']),
-			('fecha', '<=', self.balance_date)
+			('cuota_ids.fecha_vencimiento', '<=', self.balance_date)
 		])
 		records = self.env['financiera.prestamo'].browse(prestamo_ids)
 		for partner_id in records:
