@@ -54,7 +54,9 @@ class ResPartnerReportWizard(models.TransientModel):
 		sheet.write(0, 14, 'Cuotas incobrables')
 		sheet.write(0, 15, 'Fecha ultimo pago')
 		sheet.write(0, 16, 'Dias del ultimo pago')
-		sheet.write(0, 17, 'Sucursal')
+		sheet.write(0, 17, 'Dias en mora')
+		sheet.write(0, 18, 'Segmento de mora')
+		sheet.write(0, 19, 'Sucursal')
 		row = 1
 		for partner_id in records:
 			sheet.write(row, 0, partner_id.name)
@@ -74,7 +76,9 @@ class ResPartnerReportWizard(models.TransientModel):
 			sheet.write(row, 14, partner_id.alerta_cuotas_incobrable)
 			sheet.write(row, 15, partner_id.alerta_fecha_ultimo_pago)
 			sheet.write(row, 16, partner_id.alerta_dias_ultimo_pago)
-			sheet.write(row, 17, partner_id.prestamo_ids[0].sucursal_id.name)
+			sheet.write(row, 17, partner_id.dias_en_mora)
+			sheet.write(row, 18, partner_id.mora_id.name)
+			sheet.write(row, 19, partner_id.prestamo_ids[0].sucursal_id.name)
 			row +=1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())
