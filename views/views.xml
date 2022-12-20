@@ -1,79 +1,100 @@
 <openerp>
-  <data>
+	<data>
 
 		<!-- Analisis y Reportes -->
 
-    <menuitem 
-			name="Analisis y Reportes" 
-			id="menu_reportes" 
-			sequence="137" 
-			web_icon="financiera_tablero_control,static/description/icon_reports.png" 
+		<menuitem
+			name="Tablero"
+			id="menu_tablero"
+			sequence="0"
+			web_icon="financiera_tablero_control,static/description/icon_reports.png"
+			groups="financiera_tablero_control.manager"
+		/>
+
+		<menuitem
+			name="Analisis y Reportes"
+			id="menu_reportes"
+			sequence="137"
+			web_icon="financiera_tablero_control,static/description/icon_reports.png"
 			groups="financiera_tablero_control.manager"
 		/>
 
 		<!-- Submenu -->
-		<menuitem 
-			name="Prestamos" 
-			id="menu_prestamos_reportes" 
-			sequence="140" 
-			parent="menu_reportes" 
+		<menuitem
+			name="Tablero"
+			id="menu_tablero_principal"
+			sequence="140"
+			parent="menu_tablero"
+			action="tablero_action"
 			groups="financiera_tablero_control.manager"
 		/>
-    <menuitem 
-			name="Cuotas" 
-			id="menu_cuotas_reportes" 
-			sequence="150" 
-			parent="menu_reportes" 
+
+		<record id="financiera_tablero_control.tablero_action" model="ir.actions.act_window">
+			<field name="target">inline</field>
+		</record>
+
+		<menuitem
+			name="Prestamos"
+			id="menu_prestamos_reportes"
+			sequence="140"
+			parent="menu_reportes"
 			groups="financiera_tablero_control.manager"
 		/>
-		<menuitem 
-			name="Clientes" 
-			id="menu_clientes_reportes" 
-			sequence="160" 
-			parent="menu_reportes" 
+		<menuitem
+			name="Cuotas"
+			id="menu_cuotas_reportes"
+			sequence="150"
+			parent="menu_reportes"
+			groups="financiera_tablero_control.manager"
+		/>
+		<menuitem
+			name="Clientes"
+			id="menu_clientes_reportes"
+			sequence="160"
+			parent="menu_reportes"
 			groups="financiera_tablero_control.manager"
 		/>
 
 		<!-- Actions -->
 
-    <menuitem 
-			name="Analisis de prestamos" 
-			id="menu_prestamos_analisis_action" 
-			sequence="100" 
-			parent="menu_prestamos_reportes" 
+		<menuitem
+			name="Analisis de prestamos"
+			id="menu_prestamos_analisis_action"
+			sequence="100"
+			parent="menu_prestamos_reportes"
 			action="financiera_prestamo_reporte_action"
 		/>
 
-    <menuitem 
-			name="Grafico segun sucursal" 
-			id="menu_prestamos_graph_sucursal_action" 
-			sequence="100" 
-			parent="menu_prestamos_reportes" 
-			action="financiera_prestamo_graph_action"/>
+		<menuitem
+			name="Grafico segun sucursal"
+			id="menu_prestamos_graph_sucursal_action"
+			sequence="100"
+			parent="menu_prestamos_reportes"
+			action="financiera_prestamo_graph_action" />
 
-    <menuitem 
-			name="Analisis de cuotas" 
-			id="menu_cuotas_analisis_action" 
-			sequence="100" 
-			parent="menu_cuotas_reportes" 
+		<menuitem
+			name="Analisis de cuotas"
+			id="menu_cuotas_analisis_action"
+			sequence="100"
+			parent="menu_cuotas_reportes"
 			action="financiera_prestamo_reporte_cuotas_action"
 		/>
-    
-		<menuitem 
-			name="Grafico segun sucursal" 
-			id="menu_cuotas_graph_sucursal_action" 
-			sequence="110" 
-			parent="menu_cuotas_reportes" 
+
+		<menuitem
+			name="Grafico segun sucursal"
+			id="menu_cuotas_graph_sucursal_action"
+			sequence="110"
+			parent="menu_cuotas_reportes"
 			action="financiera_prestamo_cuota_sucursal_graph_action"
 		/>
 
-    <menuitem 
-			name="Grafico segun mora" 
-			id="menu_cuotas_graph_mora_action" 
-			sequence="130" 
-			parent="menu_cuotas_reportes" 
+		<menuitem
+			name="Grafico segun mora"
+			id="menu_cuotas_graph_mora_action"
+			sequence="130"
+			parent="menu_cuotas_reportes"
 			action="financiera_prestamo_cuota_mora_graph_action"
 		/>
 
-  </data>
+	</data>
 </openerp>

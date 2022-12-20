@@ -1,230 +1,141 @@
 <openerp>
   <data>
 
-    <!-- tablero tree -->
-    
-    <record model="ir.ui.view" id="tablero_tree">
-      <field name="name">financiera.tablero tree</field>
-      <field name="model">financiera.tablero</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="periodo"/>
-          <field name="month_string"/>
-          <field name="year"/>
-          <field name="company_id" groups="base.group_erp_manager"/>
-        </tree>
-      </field>
-    </record>
+    <!-- tablero -->
 
     <record model="ir.ui.view" id="tablero_form">
       <field name="name">financiera.tablero form</field>
       <field name="model">financiera.tablero</field>
       <field name="arch" type="xml">
         <form create="false" delete="false">
-          <header>
-            <button name="button_crear_meses" states="borrador" string="Crear meses" type="object" class="oe_highlight"/>
-            <button name="actualizar_tablero" states="creado" string="Actualizar Tablero" type="object" class="oe_highlight"/>
-            <field name="state" widget="statusbar"/>
-          </header>
-          <sheet>
-            <group>
-              <field name="company_id" groups="base.group_erp_manager"/>
-              <field name="name" readonly="1"/>
-              <field name="periodo" required="1"/>
-              <field name="year" required="1" widget="char"/>
-              <field name="month_string" attrs="{'invisible': [('periodo', '=', 'year')]}"/>
-              <field name="day" attrs="{'invisible': [('periodo', '!=', 'day')]}"/>
-              <field name="fecha_desde"/>
-              <field name="fecha_hasta"/>
-            </group>
-            <group>
-              <group string="Por sucursal">
-                <notebook>
-                  <page string="Venta de Prestamos">
-                    <field name="prestamo_sucursal_ids">
-                      <tree>
-                        <field name="entidad_id"/>
-                        <field name="entidad_type"/>
-                        <field name="cantidad" sum="Total"/>
-                        <field name="capital" sum="Total"/>
-                        <field name="interes" sum="Total"/>
-                        <field name="total"/>
-                        <!-- <field name="meses_promedio"/> -->
-                        <field name="nuevos" sum="Total"/>
-                      </tree>
-                    </field>
-                  </page>
-                </notebook>
+          <!-- <sheet> -->
+            <group col="1">
+              <group string="Opciones" col="5">
+                <group col="3">
+                  <div><field name="month"/></div>
+                  <div><field name="year"/></div>
+                  <div><field name="company_id" groups="base.group_erp_manager"/></div>
+                </group>
+                <group></group>
+                <group></group>
+                <group></group>
+                <group></group>
               </group>
-              <group string="Por comercio">
-                <notebook>
-                  <page string="Venta de Prestamos">
-                    <field name="prestamo_comercio_ids">
-                      <tree>
-                        <field name="entidad_id"/>
-                        <field name="entidad_type"/>
-                        <field name="cantidad" sum="Total"/>
-                        <field name="capital" sum="Total"/>
-                        <field name="interes" sum="Total"/>
-                        <field name="total"/>
-                        <!-- <field name="meses_promedio"/> -->
-                        <field name="nuevos" sum="Total"/>
-                      </tree>
-                    </field>
-                  </page>
-                </notebook>
-              </group>
-            </group>
-            <group>
-              <group string="Por Sucursal">
-                <notebook>
-                  <page string="Cobro de Cuotas">
-                    <field name="cuota_sucursal_ids" editable="1">
-                      <tree>
-                        <field name="entidad_id"/>
-                        <field name="entidad_type"/>
-                        <field name="cantidad" sum="Total"/>
-                        <field name="capital" sum="Total"/>
-                        <field name="interes" sum="Total"/>
-                        <field name="punitorio" sum="Total"/>
-                        <field name="seguro" sum="Total"/>
-                        <field name="otros" sum="Total"/>
-                        <field name="parcial" sum="Total"/>
-                        <field name="total_cobrado" sum="Total"/>
-                        <field name="por_cobrar" sum="Total"/>
-                        <field name="total_cuotas" sum="Total"/>
-                        <field name="mora"/>
-                      </tree>
-                    </field>
-                  </page>
-                </notebook>
-              </group>
+
               <group>
+                <group string="Prestamos" col="5">
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkseagreen;padding:10px;text-align:center;">
+                      <label for="prestamos_otorgados" string="Prestamos otorgados"/><br/>
+                      <field name="prestamos_otorgados"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkseagreen;padding:10px;text-align:center;">
+                      <label for="prestamos_otorgados_capital" string="Capital otorgado"/><br/>
+                      <field name="prestamos_otorgados_capital"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkseagreen;padding:10px;text-align:center;">
+                      <label for="prestamos_otorgados_total_a_cobrar" string="Total por cobrar"/><br/>
+                      <field name="prestamos_otorgados_total_a_cobrar"/>
+                    </div>
+                  </group>
+                </group>
+                <group>
+                  <field name="prestamos_otorgados_chart" widget="image" style="max-width:none;max-height:none;" nolabel="1"/>
+                </group>
               </group>
-            </group>
-            <group>
-              <group string="Por Comercio">
-                <notebook>
-                  <page string="Cobro de Cuotas">
-                    <field name="cuota_comercio_ids" editable="1">
-                      <tree>
-                        <field name="entidad_id"/>
-                        <field name="entidad_type"/>
-                        <field name="cantidad" sum="Total"/>
-                        <field name="capital" sum="Total"/>
-                        <field name="interes" sum="Total"/>
-                        <field name="punitorio" sum="Total"/>
-                        <field name="seguro" sum="Total"/>
-                        <field name="otros" sum="Total"/>
-                        <field name="parcial" sum="Total"/>
-                        <field name="total_cobrado" sum="Total"/>
-                        <field name="por_cobrar" sum="Total"/>
-                        <field name="total_cuotas" sum="Total"/>
-                        <field name="mora"/>
-                      </tree>
-                    </field>
-                  </page>
-                </notebook>
-              </group>
+
               <group>
+                <group string="Cobros" col="11">
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros" string="Cobros"/><br/>
+                      <field name="cobros"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_capital" string="Capital"/><br/>
+                      <field name="cobros_capital"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_interes" string="Interes"/><br/>
+                      <field name="cobros_interes"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_interes_iva" string="Interes IVA"/><br/>
+                      <field name="cobros_interes_iva"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_punitorio" string="Punitorio"/><br/>
+                      <field name="cobros_punitorio"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_punitorio_iva" string="Punitorio IVA"/><br/>
+                      <field name="cobros_punitorio_iva"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_seguro" string="Serguro"/><br/>
+                      <field name="cobros_seguro"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_seguro_iva" string="Seguro IVA"/><br/>
+                      <field name="cobros_seguro_iva"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_ajuste" string="Gestion"/><br/>
+                      <field name="cobros_ajuste"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_ajuste_iva" string="Gestion IVA"/><br/>
+                      <field name="cobros_ajuste_iva"/>
+                    </div>
+                  </group>
+                  <group col="1">
+                    <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                      <label for="cobros_total" string="Total"/><br/>
+                      <field name="cobros_total"/>
+                    </div>
+                  </group>
+                </group>
+                <group>
+                  <!-- grafico cobros -->
+                </group>
               </group>
+
             </group>
-            <notebook atts="{'invisible': [('periodo', '!=', 'year')]}">
-              <page string="Meses">
-                <field name="month_ids" mode="kanban" readonly="1">
-                  <kanban>
-                      <field name="id"/>
-                      <field name="name"/>
-                      <field name="month_string"/>
-                      <field name="color"/>
-                      <templates>
-                          <t t-name="kanban-box">
-                              <t t-set="id" t-value="kanban_color(record.id.raw_value)"/>
-                              <div t-att-class="id + (record.name.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
-                                  <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
-                                  <div class="oe_kanban_details">
-                                      <field name="name"/>
-                                      <div t-if="record.month_string.raw_value"><field name="month_string"/></div>
-                                      <button name="open_line" type="object" class="oe_highlight">Ver</button>
-                                  </div>
-                              </div>
-                          </t>
-                      </templates>
-                  </kanban>
-                </field>
-              </page>
-            </notebook>
-            <notebook atts="{'invisible': [('periodo', '!=', 'month')]}">
-              <page>
-                <field name="day_ids" mode="kanban" readonly="1">
-                  <kanban>
-                    <field name="id"/>
-                    <field name="name"/>
-                    <field name="day"/>
-                    <field name="color"/>
-                    <templates>
-                        <t t-name="kanban-box">
-                            <t t-set="id" t-value="kanban_color(record.id.raw_value)"/>
-                            <div t-att-class="id + (record.name.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
-                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
-                                <div class="oe_kanban_details">
-                                    <field name="name"/>
-                                    <div t-if="record.day.raw_value"><field name="day"/></div>
-                                    <button name="open_line" type="object" class="oe_highlight">Ver</button>
-                                </div>
-                            </div>
-                        </t>
-                    </templates>
-                  </kanban>
-                </field>
-              </page>
-            </notebook>
-          </sheet>
+          <!-- </sheet> -->
         </form>
       </field>
     </record>
 
-    <record id="tablero_kanban" model="ir.ui.view">
-        <field name="name">financiera.tablero.kanban</field>
-        <field name="model">financiera.tablero</field>
-        <field name="arch" type="xml">
-            <kanban class="o_res_partner_kanban">
-                <field name="id"/>
-                <field name="name"/>
-                <!-- <field name="email"/> -->
-                <field name="year"/>
-                <templates>
-                    <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_global_click">
-                            <div class="oe_kanban_details">
-                                <strong class="o_kanban_record_title">
-                                    <field name="name"/>
-                                </strong>
-                                <div t-if="record.year.value">
-                                    <t t-esc="record.year.value"/>
-                                </div>
-                                <!-- <div t-if="record.email.value">
-                                    <t t-esc="record.email.value"/>
-                                </div> -->
-                            </div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-      </record>
-
     <record model="ir.actions.act_window" id="tablero_action">
-      <field name="name">Tablero</field>
+      <field name="name">Tablero KPI's</field>
       <field name="res_model">financiera.tablero</field>
-      <field name="view_mode">kanban,tree,form</field>
-      <field name="domain">[('periodo', '=', 'year')]</field>
-      <field name="view_ids" eval="[(5, 0, 0), 
-        (0, 0, {'view_mode': 'kanban', 'view_id': ref('tablero_kanban')}), 
-        (0, 0, {'view_mode': 'tree', 'view_id': ref('tablero_tree')}), 
-        (0, 0, {'view_mode': 'form', 'view_id': ref('tablero_form')})]"/>
+      <field name="view_mode">form</field>
+      <field name="view_ids"
+        eval="[(5, 0, 0), 
+        (0, 0, {'view_mode': 'form', 'view_id': ref('tablero_form')})]" />
     </record>
-   
+
   </data>
 </openerp>
