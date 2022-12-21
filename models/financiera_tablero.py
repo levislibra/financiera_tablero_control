@@ -17,6 +17,7 @@ class FinancieraTablero(models.TransientModel):
 	month = fields.Selection([('01', 'Enero'), ('02', 'Febrero'), ('03', 'Marzo'), ('04', 'Abril'), ('05', 'Mayo'), ('06', 'Junio'), ('07', 'Julio'), ('08', 'Agosto'), ('09', 'Setiembre'), ('10', 'Octubre'), ('11', 'Noviembre'), ('12', 'Diciembre')], 'Mes', required=True, default=lambda self: datetime.now().strftime('%m'))
 	year = fields.Integer('Año', required=True, default=lambda self: datetime.now().year)
 	company_id = fields.Many2one('res.company', 'Empresa', required=False, default=lambda self: self.env['res.company']._company_default_get('financiera.tablero'))
+	currency_id = fields.Many2one('res.currency', 'Moneda', required=False, default=lambda self: self.env.user.company_id.currency_id)
 	# Prestamos
 	prestamos_otorgados = fields.Integer('Prestamos otorgados', compute='_get_prestamos_otorgados', store=True)
 	prestamos_otorgados_capital = fields.Float('Capital', digits=(16, 2), compute='_get_prestamos_otorgados', store=True)
@@ -34,6 +35,7 @@ class FinancieraTablero(models.TransientModel):
 	cobros_ajuste = fields.Float('Ajuste', digits=(16, 2), compute='_get_cobros', store=True)
 	cobros_ajuste_iva = fields.Float('Ajuste IVA', digits=(16, 2), compute='_get_cobros', store=True)
 	cobros_total = fields.Float('Total', digits=(16, 2), compute='_get_cobros', store=True)
+	cobros_chart = fields.Binary('Cobros grafico', compute='_get_cobros', store=True)
 
 	@api.one
 	@api.depends('month', 'year')
@@ -48,7 +50,9 @@ class FinancieraTablero(models.TransientModel):
 			('fecha', '>=', date_init),
 			('fecha', '<=', date_end),
 		])
-		data_set = [random.randint(1,50) for i in range(0, monthrange(self.year, int(self.month))[1]-1)]
+		# Grafico
+		# random.randint(1,50)
+		data_set = [0 for i in range(0, monthrange(self.year, int(self.month))[1])]
 		self.prestamos_otorgados = len(prestamos)
 		for prestamo in prestamos:
 			data_set[int(prestamo.fecha[8:10])-1] += 1
@@ -58,14 +62,11 @@ class FinancieraTablero(models.TransientModel):
 		self.prestamos_otorgados_total_a_cobrar = prestamos_otorgados_total_a_cobrar
 		data_values = ""
 		ejex_values = ""
-		print("data_set: ", data_set)
 		day = 1
 		for data in data_set:
 			data_values += str(data) + ","
 			ejex_values += "|" + str(day)
 			day += 1
-		print("data_values: ", data_values)
-		print("ejex_values: ", ejex_values)
 		endpoint = "http://chart.apis.google.com/chart?"
 		image_size = "chs=650x250&"
 		graph_name = "chtt=Prestamos otorgados por dia&"
@@ -75,11 +76,13 @@ class FinancieraTablero(models.TransientModel):
 		ejex = "chxl=0:" + ejex_values + "&"
 		tags = "" # "chdl=Me+gusta+%286+votos%29|no+me+gusta+%281+voto%29|nsnc+%283+votos%29"
 		marcador_valores = "chm=N,000000,0,-1,11&"
+		marcador_escala = "chds=0," + str(max(data_set)) + "&"
 		# chds=0,50&
 		# chxr=1,0,50
+		eje_escala = "chxr=1,0," + str(max(data_set)) + "&"
 		default = "chxt=x,y&chbh=a"
-		url = endpoint + image_size + graph_name + graph_type + data_colors + data + ejex + tags + marcador_valores + default
-		print("url: ", url)
+		url = endpoint + image_size + graph_name + graph_type + data_colors + data + ejex + eje_escala + tags + marcador_valores + marcador_escala + default
+		print("URL: ", url)
 		self.prestamos_otorgados_chart = base64.b64encode(requests.get(url).content)
 
 
@@ -107,17 +110,23 @@ class FinancieraTablero(models.TransientModel):
 			('payment_date', '<=', date_end),
 		])
 		self.cobros = len(payment_ids)
+		# random.randint(1,50)
+		data_set_cantidad = [0 for i in range(0, monthrange(self.year, int(self.month))[1])]
+		data_set_monto = [0 for i in range(0, monthrange(self.year, int(self.month))[1])]
 		for payment in payment_ids:
-			cobros_capital += payment.capital
-			cobros_interes += payment.interes
-			cobros_interes_iva += payment.interes_iva
-			cobros_punitorio += payment.punitorio
-			cobros_punitorio_iva += payment.punitorio_iva
-			cobros_seguro += payment.seguro
-			cobros_seguro_iva += payment.seguro_iva
-			cobros_ajuste += payment.ajuste
-			cobros_ajuste_iva += payment.ajuste_iva
-			cobros_total += payment.amount
+			if payment.payment_date and len(payment.payment_date) >= 10:
+				data_set_cantidad[int(payment.payment_date[8:10])-1] += 1
+				data_set_monto[int(payment.payment_date[8:10])-1] += payment.amount
+				cobros_capital += payment.capital
+				cobros_interes += payment.interes
+				cobros_interes_iva += payment.interes_iva
+				cobros_punitorio += payment.punitorio
+				cobros_punitorio_iva += payment.punitorio_iva
+				cobros_seguro += payment.seguro
+				cobros_seguro_iva += payment.seguro_iva
+				cobros_ajuste += payment.ajuste
+				cobros_ajuste_iva += payment.ajuste_iva
+				cobros_total += payment.amount
 		self.cobros_capital = cobros_capital
 		self.cobros_interes = cobros_interes
 		self.cobros_interes_iva = cobros_interes_iva
@@ -128,4 +137,27 @@ class FinancieraTablero(models.TransientModel):
 		self.cobros_ajuste = cobros_ajuste
 		self.cobros_ajuste_iva = cobros_ajuste_iva
 		self.cobros_total = cobros_total
+		# Grafico
+		data_values = ""
+		ejex_values = ""
+		day = 1
+		for data in data_set_monto:
+			data_values += str(data/1000) + ","
+			ejex_values += "|" + str(day)
+			day += 1
+		endpoint = "http://chart.apis.google.com/chart?"
+		image_size = "chs=800x350&"
+		graph_name = "chtt=Cobros por dia (en miles)&"
+		graph_type = "cht=bvg&" # bar vertical group
+		data_colors = "chco=76A4FB&"
+		data = "chd=t:" + data_values[0:len(data_values)-1] + "&"
+		ejex = "chxl=0:" + ejex_values + "&"
+		tags = "" # "chdl=Me+gusta+%286+votos%29|no+me+gusta+%281+voto%29|nsnc+%283+votos%29"
+		marcador_valores = "chm=N$*f0*k,000000,0,-1,12&"
+		marcador_escala = "chds=0," + str(max(data_set_monto)/1000) + "&"
+		eje_escala="chxr=1,0," + str(max(data_set_monto)) + "&"
+		default = "chxt=x,y&chbh=a"
+		url = endpoint + image_size + graph_name + graph_type + data_colors + data + ejex + tags + eje_escala + marcador_valores + marcador_escala + default
+		print("URL: ", url)
+		self.cobros_chart = base64.b64encode(requests.get(url).content)
 

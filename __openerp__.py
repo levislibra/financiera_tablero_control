@@ -35,6 +35,9 @@
 				'wizards/res_partner_report_wizard.xml',
 				'wizards/res_partner_prestamo_report_wizard.xml',
     ],
+    'css': [
+        'static/src/css/tablero_style.css',
+    ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',

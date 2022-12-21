@@ -1,0 +1,5 @@
+
+.openerp .oe_form .oe_form_field_image img {
+	max-width: 800px;
+	max-height: 400px;
+}

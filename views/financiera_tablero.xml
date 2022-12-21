@@ -8,7 +8,8 @@
       <field name="model">financiera.tablero</field>
       <field name="arch" type="xml">
         <form create="false" delete="false">
-          <!-- <sheet> -->
+          <sheet>
+            <link rel="stylesheet" href="/financiera_tablero_control/static/src/css/tablero_style.css"/>
             <group col="1">
               <group string="Opciones" col="5">
                 <group col="3">
@@ -22,7 +23,7 @@
                 <group></group>
               </group>
 
-              <group>
+              <group col="1" style="text-align: center">
                 <group string="Prestamos" col="5">
                   <group col="1">
                     <div style="border-radius:20px;background:darkseagreen;padding:10px;text-align:center;">
@@ -33,22 +34,23 @@
                   <group col="1">
                     <div style="border-radius:20px;background:darkseagreen;padding:10px;text-align:center;">
                       <label for="prestamos_otorgados_capital" string="Capital otorgado"/><br/>
-                      <field name="prestamos_otorgados_capital"/>
+                      <field name="prestamos_otorgados_capital" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkseagreen;padding:10px;text-align:center;">
-                      <label for="prestamos_otorgados_total_a_cobrar" string="Total por cobrar"/><br/>
-                      <field name="prestamos_otorgados_total_a_cobrar"/>
+                      <label for="prestamos_otorgados_total_a_cobrar" string="Total a cobrar"/><br/>
+                      <field name="prestamos_otorgados_total_a_cobrar" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                 </group>
-                <group>
-                  <field name="prestamos_otorgados_chart" widget="image" style="max-width:none;max-height:none;" nolabel="1"/>
-                </group>
               </group>
-
-              <group>
+              <group col="1" style="text-align: center">
+                <div  style="text-align:center;display: block;">
+                  <field name="prestamos_otorgados_chart" widget="image" nolabel="1"/>
+                </div>
+              </group>
+              <group col="1" style="text-align: center">
                 <group string="Cobros" col="11">
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
@@ -59,71 +61,73 @@
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_capital" string="Capital"/><br/>
-                      <field name="cobros_capital"/>
+                      <field name="cobros_capital" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_interes" string="Interes"/><br/>
-                      <field name="cobros_interes"/>
+                      <field name="cobros_interes" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_interes_iva" string="Interes IVA"/><br/>
-                      <field name="cobros_interes_iva"/>
+                      <field name="cobros_interes_iva" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_punitorio" string="Punitorio"/><br/>
-                      <field name="cobros_punitorio"/>
+                      <field name="cobros_punitorio" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_punitorio_iva" string="Punitorio IVA"/><br/>
-                      <field name="cobros_punitorio_iva"/>
+                      <field name="cobros_punitorio_iva" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_seguro" string="Serguro"/><br/>
-                      <field name="cobros_seguro"/>
+                      <field name="cobros_seguro" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_seguro_iva" string="Seguro IVA"/><br/>
-                      <field name="cobros_seguro_iva"/>
+                      <field name="cobros_seguro_iva" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_ajuste" string="Gestion"/><br/>
-                      <field name="cobros_ajuste"/>
+                      <field name="cobros_ajuste" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_ajuste_iva" string="Gestion IVA"/><br/>
-                      <field name="cobros_ajuste_iva"/>
+                      <field name="cobros_ajuste_iva" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                   <group col="1">
                     <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
                       <label for="cobros_total" string="Total"/><br/>
-                      <field name="cobros_total"/>
+                      <field name="cobros_total" options="{'currency_field': 'currency_id'}"/>
                     </div>
                   </group>
                 </group>
-                <group>
-                  <!-- grafico cobros -->
-                </group>
               </group>
-
+              <group col="1">
+                <div style="text-align:center;display: block;">
+                  <field name="cobros_chart" widget="image" nolabel="1"/>
+                  <!-- max_width="800" max_height="400" -->
+                </div>
+              </group>
             </group>
-          <!-- </sheet> -->
+          </sheet>
         </form>
       </field>
     </record>

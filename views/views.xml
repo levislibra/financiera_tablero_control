@@ -7,7 +7,7 @@
 			name="Tablero"
 			id="menu_tablero"
 			sequence="0"
-			web_icon="financiera_tablero_control,static/description/icon_reports.png"
+			web_icon="financiera_tablero_control,static/description/dashboard.png"
 			groups="financiera_tablero_control.manager"
 		/>
 
