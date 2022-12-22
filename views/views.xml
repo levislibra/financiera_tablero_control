@@ -6,7 +6,7 @@
 		<menuitem
 			name="Tablero"
 			id="menu_tablero"
-			sequence="0"
+			sequence="2"
 			web_icon="financiera_tablero_control,static/description/dashboard.png"
 			groups="financiera_tablero_control.manager"
 		/>
