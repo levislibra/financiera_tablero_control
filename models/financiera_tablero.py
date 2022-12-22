@@ -38,7 +38,7 @@ class FinancieraTablero(models.TransientModel):
 	cobros_chart = fields.Binary('Cobros grafico', compute='_get_cobros', store=True)
 
 	@api.one
-	@api.depends('month', 'year')
+	@api.depends('month', 'year', 'company_id')
 	def _get_prestamos_otorgados(self):
 		prestamos_otorgados_capital = 0
 		prestamos_otorgados_total_a_cobrar = 0
@@ -49,6 +49,7 @@ class FinancieraTablero(models.TransientModel):
 			('state', 'in', PRESTAMOS_OTORGADOS),
 			('fecha', '>=', date_init),
 			('fecha', '<=', date_end),
+			('company_id', '=', self.company_id.id)
 		])
 		# Grafico
 		# random.randint(1,50)
@@ -88,7 +89,7 @@ class FinancieraTablero(models.TransientModel):
 
 		
 	@api.one
-	@api.depends('month', 'year')
+	@api.depends('month', 'year', 'company_id')
 	def _get_cobros(self):
 		cobros_capital = 0
 		cobros_interes = 0
@@ -108,6 +109,7 @@ class FinancieraTablero(models.TransientModel):
 			('cuota_id', '!=', False),
 			('payment_date', '>=', date_init),
 			('payment_date', '<=', date_end),
+			('company_id', '=', self.company_id.id)
 		])
 		self.cobros = len(payment_ids)
 		# random.randint(1,50)

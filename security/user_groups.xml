@@ -2,17 +2,17 @@
 <openerp>
   <data>
 
-	<record model="ir.module.category" id="financiera_tablero_control_management">
-	  <field name="name">Financiera Tablero Control</field>
-	  <field name="description">Nivel de acceso</field>
-	  <field name="sequence">10</field>
-	</record>
-
-    <record id="manager" model="res.groups">
-     <field name="name">Administrador</field>
-     <field name="category_id" ref="financiera_tablero_control_management"/>
-     <!-- <field name="implied_ids" eval="[(4, ref('user'))]"/> -->
+    <record model="ir.module.category" id="financiera_tablero_control_management">
+      <field name="name">Financiera Tablero Control</field>
+      <field name="description">Nivel de acceso</field>
+      <field name="sequence">10</field>
     </record>
 
-</data>
+    <record id="manager" model="res.groups">
+      <field name="name">Administrador</field>
+      <field name="category_id" ref="financiera_tablero_control_management" />
+      <!-- <field name="implied_ids" eval="[(4, ref('user'))]"/> -->
+    </record>
+
+  </data>
 </openerp>
