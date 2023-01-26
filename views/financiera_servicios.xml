@@ -1,0 +1,66 @@
+<openerp>
+  <data>
+
+    <!-- servicios -->
+
+    <record model="ir.ui.view" id="servicios_form">
+      <field name="name">financiera.servicios form</field>
+      <field name="model">financiera.servicios</field>
+      <field name="arch" type="xml">
+        <form create="false" delete="false">
+          <sheet>
+            <link rel="stylesheet" href="/financiera_tablero_control/static/src/css/tablero_style.css"/>
+            <group>
+              <button name="button_update" string="Actualizar" type="object"/>
+            </group>
+            <group>
+              <group col="1">
+                <group col="1">
+                  <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                    <label for="servidor_correo_salientes" string="Servidores de correo" style="font-weight: bold;"/><br/>
+                    <field name="servidor_correo_salientes" widget="html" readonly="1"/>
+                  </div>
+                </group>
+              </group>
+              <group>
+                <group col="1">
+                  <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                    <label for="sms_text" string="Notificaciones por SMS" style="font-weight: bold;"/><br/>
+                    <field name="sms_text" widget="html" readonly="1"/>
+                  </div>
+                </group>
+              </group>
+
+              <group>
+                <group col="1">
+                  <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                    <label for="diarios_facturacion_electronica" string="Factura electronica" style="font-weight: bold;"/><br/>
+                    <field name="diarios_facturacion_electronica" widget="html" readonly="1"/>
+                  </div>
+                </group>
+              </group>
+              <group>
+                <group col="1">
+                  <div style="border-radius:20px;background:darkturquoise;padding:10px;text-align:center;">
+                    <label for="cobranza_y_seguimiento_text" string="Cobranza y seguimiento" style="font-weight: bold;"/><br/>
+                    <field name="cobranza_y_seguimiento_text" widget="html" readonly="1"/>
+                  </div>
+                </group>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="servicios_action">
+      <field name="name">Servicios</field>
+      <field name="res_model">financiera.servicios</field>
+      <field name="view_mode">form</field>
+      <field name="view_ids"
+        eval="[(5, 0, 0), 
+        (0, 0, {'view_mode': 'form', 'view_id': ref('servicios_form')})]" />
+    </record>
+
+  </data>
+</openerp>

@@ -4,7 +4,7 @@
 		<!-- Analisis y Reportes -->
 
 		<menuitem
-			name="Tablero"
+			name="Tablero (Beta)"
 			id="menu_tablero"
 			sequence="2"
 			web_icon="financiera_tablero_control,static/description/dashboard.png"
@@ -20,6 +20,19 @@
 		/>
 
 		<!-- Submenu -->
+		<menuitem
+			name="Servicios"
+			id="menu_servicios_principal"
+			sequence="100"
+			parent="menu_tablero"
+			action="servicios_action"
+			groups="financiera_tablero_control.manager"
+		/>
+
+		<record id="financiera_tablero_control.servicios_action" model="ir.actions.act_window">
+			<field name="target">inline</field>
+		</record>
+
 		<menuitem
 			name="Tablero"
 			id="menu_tablero_principal"
