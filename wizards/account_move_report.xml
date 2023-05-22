@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+	<record id="account_move_report_view" model="ir.ui.view">
+		<field name="name">Reporte de moves</field>
+		<field name="model">account.move.report</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet>
+					<group>
+						<field name="date_init"/>
+						<field name="date_finish"/>
+						<!-- <field name="file" filename="file_name" readonly="1"/> -->
+					</group>
+				</sheet>
+				<footer>
+					<button name="print_report" string="Imprimir" class="oe_highlight" type="object"/>
+					<button string="Cancel" class="oe_link" special="cancel"/>
+				</footer>
+			</form>
+		</field>
+	</record>
+
+	<record id="account_move_report_menu" model="ir.actions.act_window">
+		<field name="name">Reporte de moves</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">account.move.report</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="account_move_report_view"/>
+		<field name="target">new</field>
+	</record>
+
+	<menuitem id="menu_moves_report" name="Asientos Contables" parent="account.menu_finance_legal_statement" sequence="300" action="account_move_report_menu"/>
+
+	<!-- <record id="action_moves_report_values1" model="ir.values">
+		<field name="model_id" ref="account_moves.model_account_move" />
+		<field name="name">Reporte de moves</field>
+		<field name="key2">client_print_multi</field>
+		<field name="value" eval="'ir.actions.act_window,' +str(ref('account_move_report_menu'))" />
+		<field name="key">action</field>
+		<field name="model">account.move</field>
+	</record> -->
+
+	<!-- Reporte de moves PDF -->
+	<report id="move_report_pdf" model="account.move" string="Asientos - Reporte PDF" report_type="qweb-pdf" name="financiera_tablero_control.move_report_pdf_view" file="financiera_tablero_control.move_report_pdf_view" />
+	<record id="financiera_tablero_control.move_report_pdf" model="ir.actions.report.xml">
+		<field name="attachment_use" eval="False"/>
+	</record>
+
+	<template id="move_report_pdf_view">
+		<t t-call="report.html_container">
+			<t t-if="not o and doc">
+				<t t-set="o" t-value="doc"/>
+			</t>
+			<t t-if="o and 'company_id' in o">
+				<t t-set="company" t-value="o.company_id"/>
+			</t>
+			<t t-if="not o or not 'company_id' in o">
+				<t t-set="company" t-value="res_company"/>
+			</t>
+			<div class="header">
+				<div class="row">
+					<div class="col-xs-3">
+						<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+					</div>
+					<div class="col-xs-9 text-right" style="margin-top:20px;" t-field="company.rml_header1"/>
+				</div>
+				<div class="row zero_min_height">
+					<div class="col-xs-12">
+						<div style="border-bottom: 1px solid black;"/>
+					</div>
+				</div>
+			</div>
+			<div class="page" style="font-size:16px;">
+				<div align="center" style="font-size:16px;">
+					<b>Reporte de asientos contables</b>
+				</div>
+				<!-- <div class="col-xs-4">
+					<p>
+						<t t-if="data['date_init']"><strong>Fecha desde:</strong><span t-esc="data['date_init']"/><br/></t>
+						<t t-if="data['date_finish']"><strong>Fecha hasta:</strong><span t-esc="data['date_finish']"/></t>
+					</p>
+				</div> -->
+				
+				<table class="table table-condensed" style="width:100%;">
+					<thead>
+						<tr>
+							<th style="width:5%;">Nro</th>
+							<th style="width:20%;">Fecha</th>
+							<th style="width:15%;">Codigo</th>
+							<th style="width:30%;">Cuenta</th>
+							<th style="width:15%;">Debe</th>
+							<th style="width:15%;">Haber</th>
+						</tr>
+					</thead>
+					<tbody class="invoice_tbody">
+						<t t-foreach="docs" t-as="o">
+							<t t-set="nro_id" t-value="o.id"/>
+							<t t-set="date" t-value="o.date"/>
+							<tr style="font-size:13px;color:gray;">
+								<td></td>
+								<td>
+									<span t-field="o.journal_id.name"/>
+								</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+							<t t-foreach="o.line_ids" t-as="line">
+								<tr style="font-size:16px;">
+									<td>
+										<t t-if="nro_id">
+											<span t-esc="nro_id"/>
+											<t t-set="nro_id" t-value="False"/>
+										</t>
+									</td>
+									<td>
+										<t t-if="date">
+											<span t-esc="date"/>
+											<t t-set="date" t-value="False"/>
+										</t>
+									</td>
+									<td>
+										<span t-field="line.account_id.code"/>
+									</td>
+									<td>
+										<span t-field="line.account_id.name"/>
+									</td>
+									<td>
+										<span t-field="line.debit"/>
+									</td>
+									<td>
+										<span t-field="line.credit"/>
+									</td>
+								</tr>
+							</t>
+						</t>
+					</tbody>
+				</table>
+				
+			</div>
+		</t>
+	</template>
+
+
+</odoo>
