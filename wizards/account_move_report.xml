@@ -137,6 +137,14 @@
 									</td>
 								</tr>
 							</t>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td><b>$ <t t-esc="'{:0,.2f}'.format(sum([line.debit for line in o.line_ids])).replace(',','#').replace('.',',').replace('#','.')"/></b></td>
+								<td><b>$ <t t-esc="'{:0,.2f}'.format(sum([line.credit for line in o.line_ids])).replace(',','#').replace('.',',').replace('#','.')"/></b></td>
+							</tr>
 						</t>
 					</tbody>
 				</table>
