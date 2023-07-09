@@ -26,6 +26,7 @@
         'security/user_groups.xml',
         'security/ir.model.access.csv',
         'security/security.xml',
+		'views/extends_account_move.xml',
         'views/financiera_prestamo_cuota.xml',
         'views/financiera_prestamo.xml',
         'views/financiera_tablero.xml',

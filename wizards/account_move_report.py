@@ -12,17 +12,19 @@ class AccountMoveReport(models.TransientModel):
 
 	date_init = fields.Date("Fecha desde")
 	date_finish = fields.Date("Fecha hasta")
+	order_by = fields.Selection([('date_asc', 'Fecha ascendente'), ('date_desc', 'Fecha descendente')], 'Ordenar por', default='date_asc')
 	file = fields.Binary('Archivo excel')
 	file_name = fields.Char('Nombre', default='Reporte de asientos.xls')
 
 	@api.multi
 	def print_report(self):
+		order = 'date asc,nro_asiento asc' if self.order_by == 'date_asc' else 'date desc,nro_asiento desc'
 		move_obj = self.pool.get('account.move')
 		move_ids = move_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.env.user.company_id.id),
 			('state', '=', 'posted'),
 			('date', '>=', self.date_init),
-			('date', '<=', self.date_finish)])
+			('date', '<=', self.date_finish)], order=order)
 		records = self.env['account.move'].browse(move_ids)
 		return self.env['report'].get_action(records, 'financiera_tablero_control.move_report_pdf_view')
 

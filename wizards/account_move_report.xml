@@ -9,9 +9,9 @@
 			<form>
 				<sheet>
 					<group>
+						<field name="order_by"/>
 						<field name="date_init"/>
 						<field name="date_finish"/>
-						<!-- <field name="file" filename="file_name" readonly="1"/> -->
 					</group>
 				</sheet>
 				<footer>
@@ -95,9 +95,11 @@
 							<th style="width:15%;">Haber</th>
 						</tr>
 					</thead>
+					<t t-set="nro_id" t-value="0"/>
 					<tbody class="invoice_tbody">
 						<t t-foreach="docs" t-as="o">
-							<t t-set="nro_id" t-value="o.id"/>
+							<t t-set="nro_id" t-value="nro_id + 1"/>
+							<t t-set="flag_nro_id" t-value="True"/>
 							<t t-set="date" t-value="o.date"/>
 							<tr style="font-size:13px;color:gray;">
 								<td></td>
@@ -112,9 +114,9 @@
 							<t t-foreach="o.line_ids" t-as="line">
 								<tr style="font-size:16px;">
 									<td>
-										<t t-if="nro_id">
+										<t t-if="flag_nro_id">
 											<span t-esc="nro_id"/>
-											<t t-set="nro_id" t-value="False"/>
+											<t t-set="flag_nro_id" t-value="False"/>
 										</t>
 									</td>
 									<td>
