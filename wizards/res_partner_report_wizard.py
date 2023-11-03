@@ -21,7 +21,6 @@ class ResPartnerReportWizard(models.TransientModel):
 		partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.env.user.company_id.id),
 			('cuota_ids.state', 'in', ['activa']),
-			('cuota_ids.fecha_vencimiento', '<=', self.balance_date),
 		])
 		records = self.env['res.partner'].browse(partner_ids)
 		for partner_id in records:
