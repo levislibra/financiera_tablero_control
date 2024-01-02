@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'financiera_prestamos'],
+    'depends': ['base', 'financiera_prestamos','financiera_cobranza_mora','financiera_app'],
 
     # always loaded
     'data': [
@@ -30,6 +30,7 @@
         'views/financiera_prestamo_cuota.xml',
         'views/financiera_prestamo.xml',
         'views/financiera_tablero.xml',
+		'views/extends_res_partner.xml',
         'views/financiera_servicios.xml',
         'views/views.xml',
         'wizards/financiera_prestamo_report.xml',

@@ -109,5 +109,13 @@
 			action="financiera_prestamo_cuota_mora_graph_action"
 		/>
 
+		<menuitem
+			name="Analisis de clientes"
+			id="menu_clientes_reportes_action"
+			sequence="10"
+			parent="menu_clientes_reportes"
+			action="financiera_res_partner_reporte_action"
+		/>
+
 	</data>
 </openerp>
