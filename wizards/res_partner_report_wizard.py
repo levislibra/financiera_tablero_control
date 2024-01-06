@@ -58,6 +58,7 @@ class ResPartnerReportWizard(models.TransientModel):
 		sheet.write(0, 19, 'Dias en mora')
 		sheet.write(0, 20, 'Segmento de mora')
 		sheet.write(0, 21, 'Sucursal')
+		sheet.write(0, 22, 'Estudio')
 		row = 1
 		for partner_id in records:
 			sheet.write(row, 0, partner_id.name)
@@ -82,6 +83,7 @@ class ResPartnerReportWizard(models.TransientModel):
 			sheet.write(row, 19, partner_id.dias_en_mora)
 			sheet.write(row, 20, partner_id.mora_id.name)
 			sheet.write(row, 21, partner_id.prestamo_ids[0].sucursal_id.name)
+			sheet.write(row, 22, partner_id.cobranza_externa_id.name)
 			row +=1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())
