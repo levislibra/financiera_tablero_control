@@ -52,6 +52,7 @@ class FinancieraPrestamoReport(models.TransientModel):
 		sheet.write(0, 11, 'Origen')
 		sheet.write(0, 12, 'Fecha de nacimiento')
 		sheet.write(0, 13, 'Auxiliar')
+		sheet.write(0, 14, 'Identificacion')
 		row = 1
 		for prestamo_id in records:
 			sheet.write(row, 0, prestamo_id.create_date)
@@ -68,6 +69,7 @@ class FinancieraPrestamoReport(models.TransientModel):
 			sheet.write(row, 11, prestamo_id.origen_id.name)
 			sheet.write(row, 12, prestamo_id.partner_id.app_nacimiento)
 			sheet.write(row, 13, prestamo_id.auxiliar_id.name)
+			sheet.write(row, 14, prestamo_id.partner_id.main_id_number)
 			row += 1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())
