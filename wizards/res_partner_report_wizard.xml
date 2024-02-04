@@ -98,9 +98,9 @@
 							<tr>
 								<th>Cliente</th>
 								<th>Identificacion</th>
-								<th>Saldo vencido</th>
+								<!-- <th>Saldo vencido</th>
 								<th>Saldo no vencido</th>
-								<th>Saldo total</th>
+								<th>Saldo total</th> -->
 								<th>Prestamos activos</th>
 								<th>Prestamos cobrados</th>
 								<th>Cuotas activas</th>
@@ -123,9 +123,9 @@
 								<tr style="font-size:16px;">
 									<td><span t-field="o.name"/></td>
 									<td><span t-field="o.main_id_number"/></td>
-									<td><span t-field="o.saldo_vencido"/></td>
+									<!-- <td><span t-field="o.saldo_vencido"/></td>
 									<td><span t-field="o.saldo_no_vencido"/></td>
-									<td><span t-field="o.saldo_total"/></td>
+									<td><span t-field="o.saldo_total"/></td> -->
 									<td><span t-field="o.alerta_prestamos_activos"/></td>
 									<td><span t-field="o.alerta_prestamos_cobrados"/></td>
 									<td><span t-field="o.alerta_cuotas_activas"/></td>

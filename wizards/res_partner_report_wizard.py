@@ -20,11 +20,11 @@ class ResPartnerReportWizard(models.TransientModel):
 		partner_obj = self.pool.get('res.partner')
 		partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.env.user.company_id.id),
-			('cuota_ids.state', 'in', ['activa']),
+			('cuota_ids.state', 'in', ['activa','cobrada']),
 		])
 		records = self.env['res.partner'].browse(partner_ids)
-		for partner_id in records:
-			partner_id.set_saldos_reporte(self.balance_date)
+		# for partner_id in records:
+		# 	partner_id.set_saldos_reporte(self.balance_date)
 		self.generate_excel(records)
 		# data = {'balance_date': self.balance_date}
 		report = self.env['report'].get_action(records, 'financiera_tablero_control.partner_report_pdf_view')#, data=data)
@@ -65,9 +65,10 @@ class ResPartnerReportWizard(models.TransientModel):
 			sheet.write(row, 1, partner_id.main_id_number)
 			sheet.write(row, 2, partner_id.mobile)
 			sheet.write(row, 3, partner_id.email)
-			sheet.write(row, 4, partner_id.saldo_vencido)
-			sheet.write(row, 5, partner_id.saldo_no_vencido)
-			sheet.write(row, 6, partner_id.saldo_total)
+			saldos = partner_id.get_saldos(self.balance_date)
+			sheet.write(row, 4, saldos[0])
+			sheet.write(row, 5, saldos[1])
+			sheet.write(row, 6, saldos[2])
 			sheet.write(row, 7, partner_id.alerta_prestamos_activos)
 			sheet.write(row, 8, partner_id.alerta_prestamos_cobrados)
 			sheet.write(row, 9, partner_id.alerta_cuotas_activas)
