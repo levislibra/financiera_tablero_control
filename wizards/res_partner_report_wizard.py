@@ -24,7 +24,7 @@ class ResPartnerReportWizard(models.TransientModel):
 			partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
 				('company_id', '=', self.env.user.company_id.id),
 				('cuota_ids', '!=', False),
-				('reporte_fecha', '!=', self.balance_date),
+				('reporte_fecha', '=', False),
 			], limit=300)
 			print("partner_ids: ", partner_ids)
 			if not partner_ids:
@@ -105,7 +105,7 @@ class ResPartnerReportWizard(models.TransientModel):
 			sheet.write(row, 21, partner_id.prestamo_ids[0].sucursal_id.name)
 			sheet.write(row, 22, partner_id.cobranza_externa_id.name)
 			sheet.write(row, 23, partner_id.reporte_fecha)
-			# partner_id.reporte_fecha = False
+			partner_id.reporte_fecha = False
 			row +=1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())
