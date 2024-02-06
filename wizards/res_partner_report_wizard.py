@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import fields, models, api
+from openerp.exceptions import UserError, ValidationError
 import xlwt
 import base64
 import StringIO
@@ -18,16 +19,34 @@ class ResPartnerReportWizard(models.TransientModel):
 	@api.multi
 	def print_report(self):
 		partner_obj = self.pool.get('res.partner')
-		partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
+		total_procesados = 0
+		while True:
+			partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
+				('company_id', '=', self.env.user.company_id.id),
+				('cuota_ids', '!=', False),
+				('reporte_fecha', '!=', self.balance_date),
+			], limit=300)
+			print("partner_ids: ", partner_ids)
+			if not partner_ids:
+				break
+			try:
+				records = self.env['res.partner'].browse(partner_ids)
+				for partner_id in records:
+					partner_id.set_saldos_reporte(self.balance_date)
+				self.env.cr.commit()
+				total_procesados += len(records)
+				print("Procesados: %s / %s ", str(total_procesados), str(len(partner_all_ids)))
+			except Exception as e:
+				print("Error: ", e)
+				self.env.cr.rollback()
+		partner_all_ids = partner_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.env.user.company_id.id),
-			('cuota_ids.state', 'in', ['activa','cobrada']),
+			('cuota_ids', '!=', False)
 		])
-		records = self.env['res.partner'].browse(partner_ids)
-		# for partner_id in records:
-		# 	partner_id.set_saldos_reporte(self.balance_date)
-		self.generate_excel(records)
+		partner_all_ids = self.env['res.partner'].browse(partner_all_ids)
+		self.generate_excel(partner_all_ids)
 		# data = {'balance_date': self.balance_date}
-		report = self.env['report'].get_action(records, 'financiera_tablero_control.partner_report_pdf_view')#, data=data)
+		report = self.env['report'].get_action(partner_all_ids, 'financiera_tablero_control.partner_report_pdf_view')#, data=data)
 		# self.file_pdf = report
 		return report
 
@@ -59,16 +78,16 @@ class ResPartnerReportWizard(models.TransientModel):
 		sheet.write(0, 20, 'Segmento de mora')
 		sheet.write(0, 21, 'Sucursal')
 		sheet.write(0, 22, 'Estudio')
+		sheet.write(0, 23, 'Fecha de reporte')
 		row = 1
 		for partner_id in records:
 			sheet.write(row, 0, partner_id.name)
 			sheet.write(row, 1, partner_id.main_id_number)
 			sheet.write(row, 2, partner_id.mobile)
 			sheet.write(row, 3, partner_id.email)
-			saldos = partner_id.get_saldos(self.balance_date)
-			sheet.write(row, 4, saldos[0])
-			sheet.write(row, 5, saldos[1])
-			sheet.write(row, 6, saldos[2])
+			sheet.write(row, 4, partner_id.reporte_saldo_vencido)
+			sheet.write(row, 5, partner_id.reporte_saldo_no_vencido)
+			sheet.write(row, 6, partner_id.reporte_saldo_total)
 			sheet.write(row, 7, partner_id.alerta_prestamos_activos)
 			sheet.write(row, 8, partner_id.alerta_prestamos_cobrados)
 			sheet.write(row, 9, partner_id.alerta_cuotas_activas)
@@ -85,6 +104,8 @@ class ResPartnerReportWizard(models.TransientModel):
 			sheet.write(row, 20, partner_id.mora_id.name)
 			sheet.write(row, 21, partner_id.prestamo_ids[0].sucursal_id.name)
 			sheet.write(row, 22, partner_id.cobranza_externa_id.name)
+			sheet.write(row, 23, partner_id.reporte_fecha)
+			# partner_id.reporte_fecha = False
 			row +=1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())
