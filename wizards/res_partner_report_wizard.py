@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from openerp import fields, models, api
-from openerp.exceptions import UserError, ValidationError
+from datetime import datetime
 import xlwt
 import base64
 import StringIO
+
 
 class ResPartnerReportWizard(models.TransientModel):
 	_name = 'res.partner.report.wizard'
@@ -20,12 +21,14 @@ class ResPartnerReportWizard(models.TransientModel):
 	def print_report(self):
 		partner_obj = self.pool.get('res.partner')
 		total_procesados = 0
+		balance_date = datetime.strptime(self.balance_date, '%Y-%m-%d')
+		print("balance_date: ", balance_date)
 		while True:
 			partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
 				('company_id', '=', self.env.user.company_id.id),
 				('cuota_ids', '!=', False),
-				('reporte_fecha', '=', False),
-			], limit=300)
+				'|', ('reporte_fecha', '!=', balance_date), ('reporte_fecha', '=', False),
+			], limit=400)
 			print("partner_ids: ", partner_ids)
 			if not partner_ids:
 				break
@@ -33,6 +36,7 @@ class ResPartnerReportWizard(models.TransientModel):
 				records = self.env['res.partner'].browse(partner_ids)
 				for partner_id in records:
 					partner_id.set_saldos_reporte(self.balance_date)
+					print("reporte_fecha: ", partner_id.reporte_fecha)
 				self.env.cr.commit()
 				total_procesados += len(records)
 				print("Procesados: %s / %s ", str(total_procesados), str(len(partner_all_ids)))
@@ -105,7 +109,7 @@ class ResPartnerReportWizard(models.TransientModel):
 			sheet.write(row, 21, partner_id.prestamo_ids[0].sucursal_id.name)
 			sheet.write(row, 22, partner_id.cobranza_externa_id.name)
 			sheet.write(row, 23, partner_id.reporte_fecha)
-			partner_id.reporte_fecha = False
+			# partner_id.reporte_fecha = False
 			row +=1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())
