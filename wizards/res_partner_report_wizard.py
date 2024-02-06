@@ -39,7 +39,7 @@ class ResPartnerReportWizard(models.TransientModel):
 					print("reporte_fecha: ", partner_id.reporte_fecha)
 				self.env.cr.commit()
 				total_procesados += len(records)
-				print("Procesados: %s / %s ", str(total_procesados), str(len(partner_all_ids)))
+				print("Procesados: ", str(total_procesados))
 			except Exception as e:
 				print("Error: ", e)
 				self.env.cr.rollback()
