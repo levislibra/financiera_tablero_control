@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+	
+	<record id="financiera_prestamo_cuota_report_view" model="ir.ui.view">
+		<field name="name">Reporte de Cuotas</field>
+		<field name="model">financiera.prestamo.cuota.report</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet>
+					<group>
+						<field name="date_init"/>
+						<field name="date_finish"/>
+						<field name="state"/>
+						<field name="file" filename="file_name" readonly="1"/>
+					</group>
+				</sheet>
+				<footer>
+					<button name="print_report" string="Generar excel" class="oe_highlight" type="object"/>
+					<button string="Cancel" class="oe_link" special="cancel"/>
+				</footer>
+			</form>
+		</field>
+	</record>
+	
+	<record id="financiera_prestamo_cuota_report_menu" model="ir.actions.act_window">
+		<field name="name">Reporte de Cuotas</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">financiera.prestamo.cuota.report</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="financiera_prestamo_cuota_report_view"/>
+		<field name="target">new</field>
+	</record>
+	
+	<menuitem id="menu_prestamos_cuota_report"
+	name="Reporte de Cuotas"
+	parent="menu_cuotas_reportes"
+	sequence="300"
+	action="financiera_prestamo_cuota_report_menu"/>
+	
+	<record id="action_prestamos_cuota_report_values1" model="ir.values">
+		<field name="model_id" ref="financiera_prestamos.model_financiera_prestamo_cuota" />
+		<field name="name">Reporte de Cuotas</field>
+		<field name="key2">client_print_multi</field>
+		<field name="value" eval="'ir.actions.act_window,' +str(ref('financiera_prestamo_cuota_report_menu'))" />
+		<field name="key">action</field>
+		<field name="model">financiera.prestamo.cuota</field>
+	</record>
+	
+	<!-- Reporte de Prestamos PDF -->
+	<!-- <report 
+	id="prestamo_report_pdf"
+	model="financiera.prestamo"
+	string="Prestamos - Reporte PDF"
+	report_type="qweb-pdf"
+	name="financiera_tablero_control.prestamo_report_pdf_view"
+	file="financiera_tablero_control.prestamo_report_pdf_view"
+	/>
+	<record id="financiera_tablero_control.prestamo_report_pdf" model="ir.actions.report.xml">
+		<field name="attachment_use" eval="False"/>
+	</record>
+	
+	<template id="prestamo_report_pdf_view">
+		<t t-call="report.html_container">
+			<t t-if="not o and doc">
+				<t t-set="o" t-value="doc"/>
+			</t>
+			<t t-if="o and 'company_id' in o">
+				<t t-set="company" t-value="o.company_id"/>
+			</t>
+			<t t-if="not o or not 'company_id' in o">
+				<t t-set="company" t-value="res_company"/>
+			</t>
+			<div class="header">
+				<div class="row">
+					<div class="col-xs-3">
+						<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+					</div>
+					<div class="col-xs-9 text-right" style="margin-top:20px;" t-field="company.rml_header1"/>
+				</div>
+				<div class="row zero_min_height">
+					<div class="col-xs-12">
+						<div style="border-bottom: 1px solid black;"/>
+					</div>
+				</div>
+			</div>
+			<div class="page" style="font-size:16px;">
+				<div align="center" style="font-size:16px;">
+					<b>Reporte de prestamos</b>
+				</div>
+				<table class="table table-condensed" style="width:100%;">
+					<thead>
+						<tr>
+							<th style="width:9%;">Creado</th>
+							<th style="width:9%;">Cliente</th>
+							<th style="width:9%;">PMO</th>
+							<th style="width:9%;">Tipo</th>
+							<th style="width:9%;">Responsable</th>
+							<th style="width:9%;">Monto Solicitado</th>
+							<th style="width:9%;">Saldo</th>
+							<th style="width:9%;">Plan de Pagos</th>
+							<th style="width:9%;">Entidad</th>
+							<th style="width:9%;">Estado</th>
+							<th style="width:9%;">Origen</th>
+						</tr>
+					</thead>
+					<tbody class="invoice_tbody">
+						<t t-foreach="docs" t-as="o">
+							<tr style="font-size:16px;">
+								<td><span t-field="o.create_date"/></td>
+								<td><span t-field="o.partner_id.name"/></td>
+								<td><span t-field="o.name"/></td>
+								<td><span t-field="o.prestamo_tipo_id.name"/></td>
+								<td><span t-field="o.responsable_id.name"/></td>
+								<td><span t-field="o.monto_solicitado"/></td>
+								<td><span t-field="o.saldo"/></td>
+								<td><span t-field="o.plan_id.name"/></td>
+								<td><span t-field="o.sucursal_id.name"/></td>
+								<td><span t-field="o.state"/></td>
+								<td><span t-field="o.origen_id.name"/></td>
+							</tr>
+						</t>
+					</tbody>
+				</table>
+			</div>
+		</t>
+	</template> -->
+	
+	
+	
+	
+</odoo>

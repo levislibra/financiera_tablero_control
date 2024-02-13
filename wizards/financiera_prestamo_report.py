@@ -24,11 +24,14 @@ class FinancieraPrestamoReport(models.TransientModel):
 	@api.multi
 	def print_report(self):
 		prestamo_obj = self.pool.get('financiera.prestamo')
+		domain_date = []
+		if self.date_init:
+			domain_date.append(('fecha', '>=', self.date_init))
+		if self.date_finish:
+			domain_date.append(('fecha', '<=', self.date_finish))
 		prestamo_ids = prestamo_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.env.user.company_id.id),
-			('state', 'in', json.loads(self.state)),
-			('fecha', '>=', self.date_init),
-			('fecha', '<=', self.date_finish)])
+			('state', 'in', json.loads(self.state))] + domain_date)
 		records = self.env['financiera.prestamo'].browse(prestamo_ids)
 		self.generate_excel(records)
 		return self.env['report'].get_action(records, 'financiera_tablero_control.prestamo_report_pdf_view')
