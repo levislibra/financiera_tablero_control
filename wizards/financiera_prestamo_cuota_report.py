@@ -13,6 +13,7 @@ class FinancieraPrestamoCuotaReport(models.TransientModel):
 	date_init = fields.Date("Fecha desde")
 	date_finish = fields.Date("Fecha hasta")
 	state = fields.Selection([
+		('["activa","judicial","precancelada","cobrada","cobrada_con_reintegro"]','Toda la cartera'),
 		('["activa"]', 'Cuotas activas'),
 		('["activa","judicial"]', 'Cuotas activas y judiciales'),
 		('["precancelada"]', 'Cuotas precanceladas'),
