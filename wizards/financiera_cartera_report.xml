@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+	
+	<record id="financiera_estado_cartera_report_view" model="ir.ui.view">
+		<field name="name">Estado de cartera</field>
+		<field name="model">financiera.cartera.report</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet>
+					<group>
+						<field name="date"/>
+					</group>
+					<group string="Estado de la cartera">
+						<field name="file" filename="file_name" readonly="1"/>
+					</group>
+					<group string="Saldo de clientes">
+						<field name="file2" filename="file_name2" readonly="1"/>
+					</group>
+				</sheet>
+				<footer>
+					<button name="print_report" string="Generar excel" class="oe_highlight" type="object"/>
+					<button string="Cancel" class="oe_link" special="cancel"/>
+				</footer>
+			</form>
+		</field>
+	</record>
+	
+	<record id="financiera_estado_cartera_report_menu" model="ir.actions.act_window">
+		<field name="name">Estado de cartera</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">financiera.cartera.report</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="financiera_estado_cartera_report_view"/>
+		<field name="target">new</field>
+	</record>
+	
+	<menuitem id="menu_estado_cartera_report"
+	name="Estado de cartera"
+	parent="menu_cuotas_reportes"
+	sequence="300"
+	action="financiera_estado_cartera_report_menu"/>
+	
+	<!-- <record id="action_estado_cartera_report_values1" model="ir.values">
+		<field name="model_id" ref="financiera_prestamos.model_financiera_prestamo_cuota" />
+		<field name="name">Estado de cartera</field>
+		<field name="key2">client_print_multi</field>
+		<field name="value" eval="'ir.actions.act_window,' +str(ref('financiera_estado_cartera_report_menu'))" />
+		<field name="key">action</field>
+		<field name="model">financiera.prestamo.cuota</field>
+	</record> -->
+	
+	
+</odoo>

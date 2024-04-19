@@ -39,6 +39,7 @@
         'wizards/res_partner_prestamo_report_wizard.xml',
         'wizards/account_move_report.xml',
 		'wizards/financiera_prestamo_cuota_report.xml',
+		'wizards/financiera_cartera_report.xml',
     ],
     'css': [
         'static/src/css/tablero_style.css',
