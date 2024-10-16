@@ -22,26 +22,21 @@ class ResPartnerReportWizard(models.TransientModel):
 		partner_obj = self.pool.get('res.partner')
 		total_procesados = 0
 		balance_date = datetime.strptime(self.balance_date, '%Y-%m-%d')
-		print("balance_date: ", balance_date)
 		while True:
 			partner_ids = partner_obj.search(self.env.cr, self.env.uid, [
 				('company_id', '=', self.env.user.company_id.id),
 				('cuota_ids', '!=', False),
 				'|', ('reporte_fecha', '!=', balance_date), ('reporte_fecha', '=', False),
 			], limit=400)
-			print("partner_ids: ", partner_ids)
 			if not partner_ids:
 				break
 			try:
 				records = self.env['res.partner'].browse(partner_ids)
 				for partner_id in records:
 					partner_id.set_saldos_reporte(self.balance_date)
-					print("reporte_fecha: ", partner_id.reporte_fecha)
 				self.env.cr.commit()
 				total_procesados += len(records)
-				print("Procesados: ", str(total_procesados))
 			except Exception as e:
-				print("Error: ", e)
 				self.env.cr.rollback()
 		partner_all_ids = partner_obj.search(self.env.cr, self.env.uid, [
 			('company_id', '=', self.env.user.company_id.id),
@@ -89,7 +84,8 @@ class ResPartnerReportWizard(models.TransientModel):
 			sheet.write(row, 1, partner_id.main_id_number)
 			sheet.write(row, 2, partner_id.mobile)
 			sheet.write(row, 3, partner_id.email)
-			sheet.write(row, 4, partner_id.reporte_saldo_vencido)
+			reporte_saldo_vencido = partner_id.reporte_saldo_vencido if partner_id.reporte_saldo_vencido > 1 else 0
+			sheet.write(row, 4, reporte_saldo_vencido)
 			sheet.write(row, 5, partner_id.reporte_saldo_no_vencido)
 			sheet.write(row, 6, partner_id.reporte_saldo_total)
 			sheet.write(row, 7, partner_id.alerta_prestamos_activos)
