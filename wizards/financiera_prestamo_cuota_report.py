@@ -75,6 +75,7 @@ class FinancieraPrestamoCuotaReport(models.TransientModel):
 		sheet.write(0, 23, 'Facturada')
 		sheet.write(0, 24, 'Estado')
 		sheet.write(0, 25, 'Estado mora')
+		sheet.write(0, 26, 'Nacimiento (ROL)')
 		row = 1
 		for cuota_id in records:
 			sheet.write(row, 0, cuota_id.create_date)
@@ -103,6 +104,11 @@ class FinancieraPrestamoCuotaReport(models.TransientModel):
 			sheet.write(row, 23, cuota_id.facturada)
 			sheet.write(row, 24, cuota_id.state)
 			sheet.write(row, 25, cuota_id.state_mora)
+			if cuota_id.partner_id.rol_variable_ids:
+				fecha_nacimiento = cuota_id.partner_id.get_variable_name('persona_fecha_nacimiento')
+				sheet.write(row, 26, fecha_nacimiento.valor if fecha_nacimiento else '-')
+			else:
+				sheet.write(row, 26, '-')
 			row += 1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())
