@@ -47,6 +47,46 @@
 		<field name="key">action</field>
 		<field name="model">financiera.prestamo.cuota</field>
 	</record>
+
+	<!-- Reporte cuota mas ROL - PLATA EN MANO -->
+
+	<record id="financiera_prestamo_cuota_rol_report_view" model="ir.ui.view">
+		<field name="name">Reporte de Cuotas mas ROL</field>
+		<field name="model">financiera.prestamo.cuota.report</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet>
+					<group>
+						<field name="date_init"/>
+						<field name="date_finish"/>
+						<field name="state"/>
+						<field name="file" filename="file_name" readonly="1"/>
+					</group>
+				</sheet>
+				<footer>
+					<button name="print_rol_report" string="Generar excel" class="oe_highlight" type="object"/>
+					<button string="Cancel" class="oe_link" special="cancel"/>
+				</footer>
+			</form>
+		</field>
+	</record>
+	
+	<record id="financiera_prestamo_cuota_rol_report_menu" model="ir.actions.act_window">
+		<field name="name">Reporte de Cuotas mas ROL</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">financiera.prestamo.cuota.report</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="financiera_prestamo_cuota_rol_report_view"/>
+		<field name="target">new</field>
+	</record>
+
+	<menuitem id="menu_prestamos_cuota_rol_report"
+	name="Reporte de Cuotas mas ROL"
+	parent="menu_cuotas_reportes"
+	sequence="310"
+	action="financiera_prestamo_cuota_rol_report_menu"/>
+	
 	
 	<!-- Reporte de Prestamos PDF -->
 	<!-- <report 
