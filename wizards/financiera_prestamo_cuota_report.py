@@ -172,45 +172,6 @@ class FinancieraPrestamoCuotaReport(models.TransientModel):
 		sheet.write(0, 31, 'Medio de transporte frecuente')
 		sheet.write(0, 32, 'Tiene un vehiculo a su nombre')
 		sheet.write(0, 33, 'Modelo del vehiculo')
-# persona_jubilado_beneficio
-# persona_estado_cuit
-# persona_fecha_nacimiento
-# persona_jubilado
-# persona_pep
-# persona_clase
-# persona_sexo
-# persona_edad
-# persona_tipo
-# persona_fallecido
-# actividad_empleado_publico
-# perfil_letra
-# ingresos_nse
-# bancarizacion_sin_mora_meses
-# bancarizacion_sin_mora_desde
-# afip_en_linea_forma_juridica
-# empleador_periodo
-# empleador_empleados
-# autonomo_categoria
-# autonomo_hasta
-# autonomo_desde
-# anses_prestacion_provincial
-# anses_asignacion_universal
-# anses_prestacion_nacional
-# anses_trabajador_casa_particular
-# anses_progresar
-# anses_prestacion_desempleo
-# anses_plan_social
-# actividades_afip_1_descripcion
-# actividades_afip_1_codigo
-# actividades_afip_1_formulario
-# actividades_afip_1_principal
-# condicion_tributaria_1_iva
-# condicion_tributaria_1_actividad
-# condicion_tributaria_1_monotributo
-# condicion_tributaria_1_hasta
-# condicion_tributaria_1_desde
-# condicion_tributaria_1_empleador
-# condicion_tributaria_1_ganancias
 		sheet.write(0, 34, 'Persona Jubilado Beneficio (ROL)')
 		sheet.write(0, 35, 'Persona Estado CUIT (ROL)')
 		sheet.write(0, 36, 'Persona Jubilado (ROL)')
@@ -249,6 +210,8 @@ class FinancieraPrestamoCuotaReport(models.TransientModel):
 		sheet.write(0, 69, 'Condicion Tributaria 1 Desde')
 		sheet.write(0, 70, 'Condicion Tributaria 1 Empleador')
 		sheet.write(0, 71, 'Condicion Tributaria 1 Ganancias')
+		sheet.write(0, 72, 'Plan')
+		sheet.write(0, 73, 'Monto')
 
 
 		row = 1
@@ -401,6 +364,10 @@ class FinancieraPrestamoCuotaReport(models.TransientModel):
 			if cuota_id.partner_id.rol_variable_ids:
 				condicion_tributaria_1_ganancias = cuota_id.partner_id.get_variable_name('condicion_tributaria_1_ganancias')
 				sheet.write(row, 71, condicion_tributaria_1_ganancias.valor if condicion_tributaria_1_ganancias else '')
+			if cuota_id.prestamo_id.plan_id:
+				sheet.write(row, 72, cuota_id.prestamo_id.plan_id.name)
+			if cuota_id.prestamo_id.monto_solicitado:
+				sheet.write(row, 73, cuota_id.prestamo_id.monto_solicitado)
 			row += 1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())
