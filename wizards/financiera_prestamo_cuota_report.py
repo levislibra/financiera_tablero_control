@@ -212,6 +212,8 @@ class FinancieraPrestamoCuotaReport(models.TransientModel):
 		sheet.write(0, 71, 'Condicion Tributaria 1 Ganancias')
 		sheet.write(0, 72, 'Plan')
 		sheet.write(0, 73, 'Monto')
+		sheet.write(0, 74, 'Zona')
+		sheet.write(0, 75, 'Metodo de pago')
 
 
 		row = 1
@@ -368,6 +370,10 @@ class FinancieraPrestamoCuotaReport(models.TransientModel):
 				sheet.write(row, 72, cuota_id.prestamo_id.plan_id.name)
 			if cuota_id.prestamo_id.monto_solicitado:
 				sheet.write(row, 73, cuota_id.prestamo_id.monto_solicitado)
+			if cuota_id.partner_id.city:
+				sheet.write(row, 74, cuota_id.partner_id.city)
+			if cuota_id.payment_ids:
+				sheet.write(row, 75, cuota_id.payment_ids[0].journal_id.name)
 			row += 1
 		book.save(stream)
 		self.file = base64.encodestring(stream.getvalue())
