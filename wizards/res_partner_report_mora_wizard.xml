@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="res_partner_report_view" model="ir.ui.view">
+        <field name="name">Mora de clientes</field>
+        <field name="model">res.partner.report.mora.wizard</field>
+        <field name="arch" type="xml">
+			<form>
+				<sheet>
+					<group>
+						<field name="file" filename="file_name" readonly="1"/>
+					</group>
+				</sheet>
+				<footer>
+						<button name="print_report" string="Imprimir" class="oe_highlight" type="object"/>
+						<button string="Cancel" class="oe_link" special="cancel"/>
+				</footer>
+			</form>
+        </field>
+    </record>
+
+    <record id="res_partner_report_mora_menu" model="ir.actions.act_window">
+        <field name="name">Mora de clientes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner.report.mora.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="res_partner_report_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_res_partner_mora_report"
+        name="Mora de clientes"
+        parent="menu_clientes_reportes"
+				sequence="150"
+        action="res_partner_report_mora_menu"/>
+
+    <record id="action_res_partner_report_mora_values1" model="ir.values">
+        <field name="model_id" ref="financiera_prestamos.model_res_partner" />
+        <field name="name">Mora de clientes</field>
+        <field name="key2">client_print_multi</field>
+        <field name="value" eval="'ir.actions.act_window,' +str(ref('res_partner_report_mora_menu'))" />
+        <field name="key">action</field>
+        <field name="model">res.partner.mora</field>
+    </record>
+
+		<!-- Reporte de saldo de clientes en PDF -->
+		<report
+			id="partner_report_mora_pdf"
+			model="res.partner.mora"
+			string="Clientes - Reporte Mora de clientes en PDF"
+			report_type="qweb-pdf"
+			name="financiera_tablero_control.partner_report_mora_pdf_view"
+			file="financiera_tablero_control.partner_report_mora_pdf_view"
+		/>
+		<record id="financiera_tablero_control.partner_report_mora_pdf" model="ir.actions.report.xml">
+			<field name="attachment_use" eval="False"/>
+		</record>
+
+		<template id="partner_report_mora_pdf_view">
+			<t t-call="report.html_container">
+				<t t-if="not o and doc">
+					<t t-set="o" t-value="doc"/>
+				</t>
+				<t t-if="o and 'company_id' in o">
+						<t t-set="company" t-value="o.company_id"/>
+				</t>
+				<t t-if="not o or not 'company_id' in o">
+						<t t-set="company" t-value="res_company"/>
+				</t>
+				<div class="header">
+					<div class="row">
+							<div class="col-xs-3">
+									<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+							</div>
+							<div class="col-xs-9 text-right" style="margin-top:20px;" t-field="company.rml_header1"/>
+					</div>
+					<div class="row zero_min_height">
+							<div class="col-xs-12">
+									<div style="border-bottom: 1px solid black;"/>
+							</div>
+					</div>
+				</div>
+				<div class="page" style="font-size:12px;">
+					<div align="center" style="font-size:16px;">
+							<b>Mora de clientes</b>
+					</div>
+					<t t-set="today" t-value="datetime.datetime.today().strftime('%d/%m/%Y')"/>
+					<p style="text-align:right; font-size:13px;">Fecha: <span t-esc="today"/></p>
+					<table class="table table-hover table-striped" style="width:100%; border-collapse:collapse; font-size:14px;">
+						<thead style="background-color:#f2f2f2; font-size:15px;">
+							<tr>
+								<th style="padding:8px; text-align:left; border-bottom:1px solid #ccc;">Segmento</th>
+								<th style="padding:8px; text-align:right; border-bottom:1px solid #ccc;">Monto de la cartera</th>
+								<th style="padding:8px; text-align:right; border-bottom:1px solid #ccc;">Porcentaje de la cartera</th>
+								<th style="padding:8px; text-align:center; border-bottom:1px solid #ccc;">Número de clientes</th>
+							</tr>
+						</thead>
+						<tbody>
+							<t t-foreach="docs" t-as="o">
+								<tr style="font-size:14px; border-bottom:1px solid #e6e6e6;">
+									<td style="padding:6px;"> <span t-field="o.name"/> </td>
+									<td style="padding:6px; text-align:right;"> $ <span t-field="o.monto"/> </td>
+									<td style="padding:6px; text-align:right;"> <span t-field="o.porcentaje"/>% </td>
+									<td style="padding:6px; text-align:center;"> <span t-field="o.partner_cantidad"/> </td>
+								</tr>
+							</t>
+							<!-- Fila de totales -->
+							<tr style="font-weight:bold; background-color:#f9f9f9; border-top:2px solid #ccc;">
+								<td style="padding:6px;">TOTAL</td>
+								<td style="padding:6px; text-align:right;"><span t-esc="sum(o.monto for o in docs)"/></td>
+								<td style="padding:6px; text-align:right;"><span t-esc="sum(o.porcentaje for o in docs)"/>%</td>
+								<td style="padding:6px; text-align:center;"><span t-esc="sum(o.partner_cantidad for o in docs)"/></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</t>
+		</template>
+
+</odoo>

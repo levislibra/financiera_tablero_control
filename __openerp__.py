@@ -40,6 +40,7 @@
         'wizards/account_move_report.xml',
 		'wizards/financiera_prestamo_cuota_report.xml',
 		'wizards/financiera_cartera_report.xml',
+		'wizards/res_partner_report_mora_wizard.xml',
     ],
     'css': [
         'static/src/css/tablero_style.css',
