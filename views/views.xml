@@ -117,5 +117,13 @@
 			action="financiera_res_partner_reporte_action"
 		/>
 
+		<menuitem
+			name="Segmentos de Mora de clientes (Pivot)"
+			id="menu_clientes_reportes_mora_action"
+			sequence="10"
+			parent="menu_clientes_reportes"
+			action="financiera_res_partner_reporte_mora_action"
+		/>
+
 	</data>
 </openerp>
