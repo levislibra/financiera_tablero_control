@@ -2,7 +2,7 @@
 
 <odoo>
 
-    <record id="res_partner_report_view" model="ir.ui.view">
+    <record id="res_partner_mora_report_view" model="ir.ui.view">
         <field name="name">Mora de clientes</field>
         <field name="model">res.partner.report.mora.wizard</field>
         <field name="arch" type="xml">

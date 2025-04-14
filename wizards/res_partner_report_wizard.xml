@@ -6,19 +6,19 @@
         <field name="name">Saldo de clientes</field>
         <field name="model">res.partner.report.wizard</field>
         <field name="arch" type="xml">
-          <form>
-						<sheet>
-							<group>
-								<field name="balance_date" required="1"/>
-								<!-- <field name="file_pdf" filename="file_name_pdf" readonly="1"/> -->
-								<field name="file" filename="file_name" readonly="1"/>
-							</group>
-						</sheet>
-						<footer>
-								<button name="print_report" string="Imprimir" class="oe_highlight" type="object"/>
-								<button string="Cancel" class="oe_link" special="cancel"/>
-						</footer>
-				</form>
+			<form>
+				<sheet>
+					<group>
+						<field name="balance_date" required="1"/>
+						<!-- <field name="file_pdf" filename="file_name_pdf" readonly="1"/> -->
+						<field name="file" filename="file_name" readonly="1"/>
+					</group>
+				</sheet>
+				<footer>
+						<button name="print_report" string="Imprimir" class="oe_highlight" type="object"/>
+						<button string="Cancel" class="oe_link" special="cancel"/>
+				</footer>
+			</form>
         </field>
     </record>
 
